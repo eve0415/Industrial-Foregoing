@@ -10,17 +10,11 @@ buildscript {
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.31"
-        classpath 'com.selesse:gradle-git-changelog:0.2.+'
-        classpath "gradle.plugin.com.matthewprenger:CurseGradle:1.1.0"
     }
 }
-plugins {
-    id "com.github.hierynomus.license" version "0.14.0"
-    id "com.matthewprenger.cursegradle" version "1.1.0"
-}
+
 apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'maven'
-apply plugin: 'com.selesse.git.changelog'
 apply plugin: 'java'
 
 
@@ -135,120 +129,4 @@ task devJar(type: Jar, dependsOn: 'classes') {
 artifacts {
     archives devJar
     archives apiJar
-}
-
-configurations {
-    deployerJars
-}
-
-dependencies {
-    deployerJars "org.apache.maven.wagon:wagon-ftp:2.2"
-}
-
-uploadArchives {
-    if (project.hasProperty('username') && project.hasProperty('password')) {
-        repositories {
-            mavenDeployer {
-                configuration = configurations.deployerJars
-                //repository(url: System.properties['URL']) {
-                repository(url: "ftp://dyonovan.com/srv/http/maven2") {
-                    authentication(userName: "${username}", password: "${password}")
-                }
-                pom {
-                    groupId = project.group
-                    version = project.version
-                    artifactId = project.archivesBaseName
-
-                    pom.project {
-                        name = project.archivesBaseName
-                        packaging 'jar'
-                        description 'Industrial Foregoing'
-                        url 'https://github.com/Buuz135/Industrial-Foregoing'
-                        scm {
-                            url 'https://github.com/Buuz135/Industrial-Foregoing'
-                            connection 'scm:git:git@github.com/Buuz135/Industrial-Foregoing'
-                            developerConnection 'scm:git:git@github.com/Buuz135/Industrial-Foregoing'
-                        }
-                        issueManagement {
-                            system 'github'
-                            url 'https://github.com/Buuz135/Industrial-Foregoing/issues'
-                        }
-                        licenses {
-                            license {
-                                name 'MIT License'
-                                url 'https://opensource.org/licenses/MIT'
-                                distribution 'repo'
-                            }
-                        }
-                        developers {
-                            developer {
-                                id 'Buuz135'
-                                name 'Buuz135'
-                                roles {
-                                    role 'developer'
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-        }
-    }
-}
-
-changelog {
-    title = "Industrial Foregoing"
-    fileName = "CHANGELOG.md"
-    outputDirectory = file("$projectDir")
-    since = '1.10.6'
-    commitFormat = '%s (%an)'
-    markdown {
-        commitFormat = '* %s (%an)'
-    }
-    includeLines = {
-        !it.contains("Merge")
-    }
-    processLines = {
-        String input = it as String
-        if (input.contains('[ci skip] ')) {
-            input = input.minus('[ci skip] ')
-        }
-        input
-    }
-}
-
-tasks.curseforge.enabled =  project.hasProperty('curse_api')
-
-curseforge {
-    if (project.hasProperty('curse_api')) {
-        apiKey = project.curse_api
-    }
-    project {
-        id = '266515'
-        changelog = file('CHANGELOG.md')
-        changelogType = 'markdown'
-        releaseType = 'beta'
-
-        mainArtifact(jar){
-            relations {
-                requiredLibrary 'tesla-core-lib'
-            }
-        }
-
-        addArtifact sourceJar
-        addArtifact apiJar
-        addArtifact devJar
-    }
-}
-
-license {
-    header rootProject.file('HEADER')
-    include "**/*.java"
-    ext.year = Calendar.getInstance().get(Calendar.YEAR)
-    ext.name = 'Buuz135'
-    ignoreFailures = true
-    mapping {
-        java='SLASHSTAR_STYLE'
-    }
 }

@@ -3,32 +3,30 @@
  *
  * Copyright 2019, Buuz135
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in the
- * Software without restriction, including without limitation the rights to use, copy,
- * modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
- * and to permit persons to whom the Software is furnished to do so, subject to the
- * following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+ * associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all copies
- * or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
- * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
- * PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
- * FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
- * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+ * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 package com.buuz135.industrial.tile.world;
 
+import java.util.List;
 import com.buuz135.industrial.proxy.client.render.LaserDrillSpecialRender;
 import com.buuz135.industrial.tile.CustomElectricMachine;
 import com.buuz135.industrial.utils.WorkUtils;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
-
-import java.util.List;
 
 
 public class LaserDrillTile extends CustomElectricMachine {
@@ -45,11 +43,12 @@ public class LaserDrillTile extends CustomElectricMachine {
 
     @Override
     protected float performWork() {
-        if (WorkUtils.isDisabled(this.getBlockType())) return 0;
+        if (WorkUtils.isDisabled(this.getBlockType()))
+            return 0;
 
-        BlockPos pos = getLaserBasePos();
+        final BlockPos pos = getLaserBasePos();
         if (pos != null) {
-            LaserBaseTile tile = (LaserBaseTile) this.world.getTileEntity(pos);
+            final LaserBaseTile tile = (LaserBaseTile) this.world.getTileEntity(pos);
             tile.increaseWork();
             return 1;
         }
@@ -57,15 +56,17 @@ public class LaserDrillTile extends CustomElectricMachine {
     }
 
     public BlockPos getLaserBasePos() {
-        BlockPos pos = this.pos.offset(this.getFacing().getOpposite(), 2);
-        if (this.world.getTileEntity(pos) != null && this.world.getTileEntity(pos) instanceof LaserBaseTile) return pos;
+        final BlockPos pos = this.pos.offset(this.getFacing().getOpposite(), 2);
+        if (this.world.getTileEntity(pos) != null
+                && this.world.getTileEntity(pos) instanceof LaserBaseTile)
+            return pos;
         return null;
     }
 
 
     @Override
     public List<TileEntitySpecialRenderer<TileEntity>> getRenderers() {
-        List<TileEntitySpecialRenderer<TileEntity>> render = super.getRenderers();
+        final List<TileEntitySpecialRenderer<TileEntity>> render = super.getRenderers();
         render.add(new LaserDrillSpecialRender());
         return render;
     }

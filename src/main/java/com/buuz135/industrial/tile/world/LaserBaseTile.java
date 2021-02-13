@@ -3,24 +3,25 @@
  *
  * Copyright 2019, Buuz135
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in the
- * Software without restriction, including without limitation the rights to use, copy,
- * modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
- * and to permit persons to whom the Software is furnished to do so, subject to the
- * following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+ * associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all copies
- * or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
- * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
- * PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
- * FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
- * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+ * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 package com.buuz135.industrial.tile.world;
 
+import java.util.ArrayList;
+import java.util.List;
 import com.buuz135.industrial.api.recipe.LaserDrillEntry;
 import com.buuz135.industrial.item.LaserLensItem;
 import com.buuz135.industrial.proxy.BlockRegistry;
@@ -31,6 +32,7 @@ import com.buuz135.industrial.proxy.client.infopiece.TextInfoPiece;
 import com.buuz135.industrial.tile.CustomColoredItemHandler;
 import com.buuz135.industrial.tile.CustomSidedTileEntity;
 import com.buuz135.industrial.utils.ItemStackWeightedItem;
+import org.jetbrains.annotations.Nullable;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
@@ -45,10 +47,6 @@ import net.ndrei.teslacorelib.gui.BasicTeslaGuiContainer;
 import net.ndrei.teslacorelib.gui.IGuiContainerPiece;
 import net.ndrei.teslacorelib.inventory.SyncProviderLevel;
 import net.ndrei.teslacorelib.netsync.SimpleNBTMessage;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class LaserBaseTile extends CustomSidedTileEntity implements IHasDisplayString {
 
@@ -64,7 +62,8 @@ public class LaserBaseTile extends CustomSidedTileEntity implements IHasDisplayS
         super(LaserBaseTile.class.getName().hashCode());
         currentWork = 0;
         depth = 0;
-        registerSyncIntPart("Depth", nbtTagInt -> depth = nbtTagInt.getInt(), () -> new NBTTagInt(depth), SyncProviderLevel.GUI);
+        registerSyncIntPart("Depth", nbtTagInt -> depth = nbtTagInt.getInt(),
+                () -> new NBTTagInt(depth), SyncProviderLevel.GUI);
     }
 
     @Override
@@ -72,18 +71,19 @@ public class LaserBaseTile extends CustomSidedTileEntity implements IHasDisplayS
         super.initializeInventories();
         lensItems = new ItemStackHandler(2 * 3) {
             @Override
-            protected void onContentsChanged(int slot) {
+            protected void onContentsChanged(final int slot) {
                 LaserBaseTile.this.markDirty();
             }
         };
-        this.addInventory(new CustomColoredItemHandler(lensItems, EnumDyeColor.GREEN, "Lens items", 18 * 2, 25, 2, 3) {
+        this.addInventory(new CustomColoredItemHandler(lensItems, EnumDyeColor.GREEN, "Lens items",
+                18 * 2, 25, 2, 3) {
             @Override
-            public boolean canInsertItem(int slot, ItemStack stack) {
+            public boolean canInsertItem(final int slot, final ItemStack stack) {
                 return stack.getItem() instanceof LaserLensItem;
             }
 
             @Override
-            public boolean canExtractItem(int slot) {
+            public boolean canExtractItem(final int slot) {
                 return super.canExtractItem(slot);
             }
         });
@@ -91,50 +91,58 @@ public class LaserBaseTile extends CustomSidedTileEntity implements IHasDisplayS
 
         outItems = new ItemStackHandler(3 * 6) {
             @Override
-            protected void onContentsChanged(int slot) {
+            protected void onContentsChanged(final int slot) {
                 LaserBaseTile.this.markDirty();
             }
         };
-        this.addInventory(new CustomColoredItemHandler(outItems, EnumDyeColor.ORANGE, "Output items", 18 * 4 + 6, 25, 6, 3) {
+        this.addInventory(new CustomColoredItemHandler(outItems, EnumDyeColor.ORANGE,
+                "Output items", 18 * 4 + 6, 25, 6, 3) {
             @Override
-            public boolean canInsertItem(int slot, ItemStack stack) {
+            public boolean canInsertItem(final int slot, final ItemStack stack) {
                 return false;
             }
 
             @Override
-            public boolean canExtractItem(int slot) {
+            public boolean canExtractItem(final int slot) {
                 return true;
             }
         });
         this.addInventoryToStorage(outItems, "outItems");
-        registerSyncIntPart(NBT_CURRENT, nbtTagInt -> currentWork = nbtTagInt.getInt(), () -> new NBTTagInt(currentWork), SyncProviderLevel.GUI);
+        registerSyncIntPart(NBT_CURRENT, nbtTagInt -> currentWork = nbtTagInt.getInt(),
+                () -> new NBTTagInt(currentWork), SyncProviderLevel.GUI);
     }
 
     @Override
-    public List<IGuiContainerPiece> getGuiContainerPieces(BasicTeslaGuiContainer container) {
-        List<IGuiContainerPiece> pieces = super.getGuiContainerPieces(container);
+    public List<IGuiContainerPiece> getGuiContainerPieces(final BasicTeslaGuiContainer container) {
+        final List<IGuiContainerPiece> pieces = super.getGuiContainerPieces(container);
         pieces.add(new LaserBaseInfoPiece(this, 10, 25));
 
-        pieces.add(new ArrowInfoPiece(153, 85, 1, 104, "text.industrialforegoing.button.increase_depth") {
+        pieces.add(new ArrowInfoPiece(153, 85, 1, 104,
+                "text.industrialforegoing.button.increase_depth") {
             @Override
             protected void clicked() {
                 if (TeslaCoreLib.INSTANCE.isClientSide()) {
                     if (GuiScreen.isShiftKeyDown()) {
-                        LaserBaseTile.this.sendToServer(LaserBaseTile.this.setupSpecialNBTMessage("DEPTH_INCREASE_10"));
+                        LaserBaseTile.this.sendToServer(
+                                LaserBaseTile.this.setupSpecialNBTMessage("DEPTH_INCREASE_10"));
                     } else {
-                        LaserBaseTile.this.sendToServer(LaserBaseTile.this.setupSpecialNBTMessage("DEPTH_INCREASE"));
+                        LaserBaseTile.this.sendToServer(
+                                LaserBaseTile.this.setupSpecialNBTMessage("DEPTH_INCREASE"));
                     }
                 }
             }
         });
-        pieces.add(new ArrowInfoPiece(117, 85, 16, 104, "text.industrialforegoing.button.decrease_depth") {
+        pieces.add(new ArrowInfoPiece(117, 85, 16, 104,
+                "text.industrialforegoing.button.decrease_depth") {
             @Override
             protected void clicked() {
                 if (TeslaCoreLib.INSTANCE.isClientSide()) {
                     if (GuiScreen.isShiftKeyDown()) {
-                        LaserBaseTile.this.sendToServer(LaserBaseTile.this.setupSpecialNBTMessage("DEPTH_DECREASE_10"));
+                        LaserBaseTile.this.sendToServer(
+                                LaserBaseTile.this.setupSpecialNBTMessage("DEPTH_DECREASE_10"));
                     } else {
-                        LaserBaseTile.this.sendToServer(LaserBaseTile.this.setupSpecialNBTMessage("DEPTH_DECREASE"));
+                        LaserBaseTile.this.sendToServer(
+                                LaserBaseTile.this.setupSpecialNBTMessage("DEPTH_DECREASE"));
                     }
                 }
             }
@@ -145,7 +153,8 @@ public class LaserBaseTile extends CustomSidedTileEntity implements IHasDisplayS
 
     @Nullable
     @Override
-    protected SimpleNBTMessage processClientMessage(String messageType, NBTTagCompound compound) {
+    protected SimpleNBTMessage processClientMessage(final String messageType,
+            final NBTTagCompound compound) {
         super.processClientMessage(messageType, compound);
         if (messageType.equals("DEPTH_INCREASE_10")) {
             depth = Math.min(depth + 10, 255);
@@ -168,38 +177,40 @@ public class LaserBaseTile extends CustomSidedTileEntity implements IHasDisplayS
 
     @Override
     protected void innerUpdate() {
-        if (this.world.isRemote) return;
+        if (this.world.isRemote)
+            return;
         if (currentWork >= getMaxWork()) {
-            List<ItemStackWeightedItem> items = new ArrayList<>();
+            final List<ItemStackWeightedItem> items = new ArrayList<>();
             LaserDrillEntry.LASER_DRILL_ENTRIES[this.depth].forEach(entry -> {
-                if (
-                        entry.getWhitelist().isEmpty() ||
-                                entry.getWhitelist().contains(this.getWorld().getBiome(this.getPos()))
-                ) {
+                if (entry.getWhitelist().isEmpty()
+                        || entry.getWhitelist().contains(this.getWorld().getBiome(this.getPos()))) {
                     if (!entry.getBlacklist().contains(this.getWorld().getBiome(this.getPos()))) {
                         int increase = 0;
                         for (int i = 0; i < lensItems.getSlots(); ++i) {
-                            if (
-                                    !lensItems.getStackInSlot(i).isEmpty()
-                                            &&
-                                            lensItems.getStackInSlot(i).getMetadata() == entry.getLaserMeta()
-                                            &&
-                                            lensItems.getStackInSlot(i).getItem() instanceof LaserLensItem
-                            ) {
-                                if (((LaserLensItem) lensItems.getStackInSlot(i).getItem()).isInverted()) {
-                                    increase -= BlockRegistry.laserBaseBlock.getLenseChanceIncrease();
+                            if (!lensItems.getStackInSlot(i).isEmpty()
+                                    && lensItems.getStackInSlot(i).getMetadata() == entry
+                                            .getLaserMeta()
+                                    && lensItems.getStackInSlot(i)
+                                            .getItem() instanceof LaserLensItem) {
+                                if (((LaserLensItem) lensItems.getStackInSlot(i).getItem())
+                                        .isInverted()) {
+                                    increase -=
+                                            BlockRegistry.laserBaseBlock.getLenseChanceIncrease();
                                 } else {
-                                    increase += BlockRegistry.laserBaseBlock.getLenseChanceIncrease();
+                                    increase +=
+                                            BlockRegistry.laserBaseBlock.getLenseChanceIncrease();
                                 }
                             }
                         }
-                        items.add(new ItemStackWeightedItem(entry.getStack(), entry.getWeight() + increase));
+                        items.add(new ItemStackWeightedItem(entry.getStack(),
+                                entry.getWeight() + increase));
                     }
                 }
             });
 
             if (!items.isEmpty()) {
-                ItemStack stack = WeightedRandom.getRandomItem(this.world.rand, items).getStack().copy();
+                final ItemStack stack =
+                        WeightedRandom.getRandomItem(this.world.rand, items).getStack().copy();
                 if (ItemHandlerHelper.insertItem(outItems, stack, true).isEmpty()) {
                     ItemHandlerHelper.insertItem(outItems, stack, false);
                 }
@@ -209,16 +220,18 @@ public class LaserBaseTile extends CustomSidedTileEntity implements IHasDisplayS
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound compound) {
+    public void readFromNBT(final NBTTagCompound compound) {
         super.readFromNBT(compound);
         currentWork = 0;
         depth = 0;
-        if (compound.hasKey(NBT_CURRENT)) currentWork = compound.getInteger(NBT_CURRENT);
-        if (compound.hasKey("Depth")) depth = compound.getInteger("Depth");
+        if (compound.hasKey(NBT_CURRENT))
+            currentWork = compound.getInteger(NBT_CURRENT);
+        if (compound.hasKey("Depth"))
+            depth = compound.getInteger("Depth");
     }
 
     @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+    public NBTTagCompound writeToNBT(final NBTTagCompound compound) {
         compound.setInteger(NBT_CURRENT, currentWork);
         compound.setInteger("Depth", depth);
         return super.writeToNBT(compound);
@@ -257,7 +270,7 @@ public class LaserBaseTile extends CustomSidedTileEntity implements IHasDisplayS
     }
 
     @Override
-    public String getString(int id) {
+    public String getString(final int id) {
         return "" + TextFormatting.DARK_GRAY + this.getDepth();
     }
 }

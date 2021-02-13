@@ -3,36 +3,34 @@
  *
  * Copyright 2019, Buuz135
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in the
- * Software without restriction, including without limitation the rights to use, copy,
- * modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
- * and to permit persons to whom the Software is furnished to do so, subject to the
- * following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+ * associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all copies
- * or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
- * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
- * PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
- * FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
- * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+ * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 package com.buuz135.industrial.api.plant;
 
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public abstract class PlantRecollectable extends IForgeRegistryEntry.Impl<PlantRecollectable> {
 
-    public PlantRecollectable(String name) {
+    public PlantRecollectable(final String name) {
         setRegistryName(name);
     }
 
@@ -54,7 +52,8 @@ public abstract class PlantRecollectable extends IForgeRegistryEntry.Impl<PlantR
      * @param blockState The IBlockState of the Block.
      * @return A list of the drops of that Block.
      */
-    public abstract List<ItemStack> doHarvestOperation(World world, BlockPos pos, IBlockState blockState);
+    public abstract List<ItemStack> doHarvestOperation(World world, BlockPos pos,
+            IBlockState blockState);
 
     /**
      * Harvests the block
@@ -65,7 +64,8 @@ public abstract class PlantRecollectable extends IForgeRegistryEntry.Impl<PlantR
      * @param extras     An extra of values inserted in the Gatherer.
      * @return A list of the drops of that Block.
      */
-    public List<ItemStack> doHarvestOperation(World world, BlockPos pos, IBlockState blockState, Object... extras) {
+    public List<ItemStack> doHarvestOperation(final World world, final BlockPos pos,
+            final IBlockState blockState, final Object... extras) {
         return doHarvestOperation(world, pos, blockState);
     }
 
@@ -75,7 +75,8 @@ public abstract class PlantRecollectable extends IForgeRegistryEntry.Impl<PlantR
      * @param world      The world where the Block is located.
      * @param pos        The position where the Block is located.
      * @param blockState The IBlockState of the Block.
-     * @return True if the harvester should check the next position or false if it should keep checking the current position.
+     * @return True if the harvester should check the next position or false if it should keep
+     *         checking the current position.
      */
     public abstract boolean shouldCheckNextPlant(World world, BlockPos pos, IBlockState blockState);
 
@@ -107,8 +108,6 @@ public abstract class PlantRecollectable extends IForgeRegistryEntry.Impl<PlantR
     }
 
     public enum Type {
-        TREE,
-        PLANT,
-        ANY
+        TREE, PLANT, ANY
     }
 }

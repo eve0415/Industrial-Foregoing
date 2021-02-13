@@ -3,27 +3,28 @@
  *
  * Copyright 2019, Buuz135
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in the
- * Software without restriction, including without limitation the rights to use, copy,
- * modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
- * and to permit persons to whom the Software is furnished to do so, subject to the
- * following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+ * associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all copies
- * or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
- * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
- * PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
- * FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
- * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+ * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 package com.buuz135.industrial.tile.misc;
 
+import java.util.List;
 import com.buuz135.industrial.proxy.client.infopiece.BlackHoleInfoPiece;
 import com.buuz135.industrial.proxy.client.infopiece.IHasDisplayStack;
 import com.buuz135.industrial.tile.CustomSidedTileEntity;
+import org.jetbrains.annotations.NotNull;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
@@ -39,9 +40,6 @@ import net.ndrei.teslacorelib.gui.BasicTeslaGuiContainer;
 import net.ndrei.teslacorelib.gui.IGuiContainerPiece;
 import net.ndrei.teslacorelib.inventory.FluidTankType;
 import net.ndrei.teslacorelib.items.TeslaWrench;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 public class BlackHoleTankTile extends CustomSidedTileEntity implements IHasDisplayStack {
 
@@ -55,13 +53,15 @@ public class BlackHoleTankTile extends CustomSidedTileEntity implements IHasDisp
     @Override
     protected void initializeInventories() {
         super.initializeInventories();
-        tank = this.addSimpleFluidTank(Integer.MAX_VALUE, "Tank", EnumDyeColor.CYAN, 6, 25, FluidTankType.BOTH, fluidStack -> true, fluidStack -> true);
+        tank = this.addSimpleFluidTank(Integer.MAX_VALUE, "Tank", EnumDyeColor.CYAN, 6, 25,
+                FluidTankType.BOTH, fluidStack -> true, fluidStack -> true);
     }
 
     @Override
     protected void innerUpdate() {
         if (hadFluid != tank.getFluidAmount() > 0) {
-            this.world.notifyBlockUpdate(this.pos, this.world.getBlockState(this.pos), this.world.getBlockState(this.pos), 3);
+            this.world.notifyBlockUpdate(this.pos, this.world.getBlockState(this.pos),
+                    this.world.getBlockState(this.pos), 3);
             hadFluid = tank.getFluidAmount() > 0;
         }
     }
@@ -85,7 +85,8 @@ public class BlackHoleTankTile extends CustomSidedTileEntity implements IHasDisp
 
     @Override
     public String getDisplayNameUnlocalized() {
-        return tank.getFluid() == null ? "text.industrialforegoing.display.empty" : tank.getFluid().getLocalizedName();
+        return tank.getFluid() == null ? "text.industrialforegoing.display.empty"
+                : tank.getFluid().getLocalizedName();
     }
 
     @Override
@@ -94,8 +95,8 @@ public class BlackHoleTankTile extends CustomSidedTileEntity implements IHasDisp
     }
 
     @Override
-    public List<IGuiContainerPiece> getGuiContainerPieces(BasicTeslaGuiContainer container) {
-        List<IGuiContainerPiece> list = super.getGuiContainerPieces(container);
+    public List<IGuiContainerPiece> getGuiContainerPieces(final BasicTeslaGuiContainer container) {
+        final List<IGuiContainerPiece> list = super.getGuiContainerPieces(container);
         list.add(new BlackHoleInfoPiece(this, 18 * 2 + 8, 25));
         return list;
     }
@@ -116,7 +117,11 @@ public class BlackHoleTankTile extends CustomSidedTileEntity implements IHasDisp
 
     @NotNull
     @Override
-    public EnumActionResult onWrenchUse(@NotNull TeslaWrench wrench, @NotNull EntityPlayer player, @NotNull World world, @NotNull BlockPos pos, @NotNull EnumHand hand, @NotNull EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public EnumActionResult onWrenchUse(@NotNull final TeslaWrench wrench,
+            @NotNull final EntityPlayer player, @NotNull final World world,
+            @NotNull final BlockPos pos, @NotNull final EnumHand hand,
+            @NotNull final EnumFacing facing, final float hitX, final float hitY,
+            final float hitZ) {
         return EnumActionResult.PASS;
     }
 }

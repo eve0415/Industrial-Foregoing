@@ -3,21 +3,20 @@
  *
  * Copyright 2019, Buuz135
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in the
- * Software without restriction, including without limitation the rights to use, copy,
- * modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
- * and to permit persons to whom the Software is furnished to do so, subject to the
- * following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+ * associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all copies
- * or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
- * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
- * PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
- * FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
- * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+ * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 package com.buuz135.industrial.proxy.client.event;
 
@@ -39,30 +38,42 @@ public class IFWorldRenderLastEvent {
 
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
-    public void onRender(RenderGameOverlayEvent.Post event) {
-        EntityPlayerSP playerIn = Minecraft.getMinecraft().player;
-        if (!playerIn.getHeldItemMainhand().getItem().equals(ItemRegistry.bookManualItem) || Minecraft.getMinecraft().currentScreen != null)
+    public void onRender(final RenderGameOverlayEvent.Post event) {
+        final EntityPlayerSP playerIn = Minecraft.getMinecraft().player;
+        if (!playerIn.getHeldItemMainhand().getItem().equals(ItemRegistry.bookManualItem)
+                || Minecraft.getMinecraft().currentScreen != null)
             return;
-        float f = playerIn.rotationPitch;
-        float f1 = playerIn.rotationYaw;
-        double d0 = playerIn.posX;
-        double d1 = playerIn.posY + (double) playerIn.getEyeHeight();
-        double d2 = playerIn.posZ;
-        Vec3d vec3d = new Vec3d(d0, d1, d2);
-        float f2 = MathHelper.cos(-f1 * 0.017453292F - (float) Math.PI);
-        float f3 = MathHelper.sin(-f1 * 0.017453292F - (float) Math.PI);
-        float f4 = -MathHelper.cos(-f * 0.017453292F);
-        float f5 = MathHelper.sin(-f * 0.017453292F);
-        float f6 = f3 * f4;
-        float f7 = f2 * f4;
-        double d3 = 5.0D;
-        Vec3d vec3d1 = vec3d.add((double) f6 * d3, (double) f5 * d3, (double) f7 * d3);
-        RayTraceResult result = Minecraft.getMinecraft().world.rayTraceBlocks(vec3d, vec3d1, false, true, false);
+        final float f = playerIn.rotationPitch;
+        final float f1 = playerIn.rotationYaw;
+        final double d0 = playerIn.posX;
+        final double d1 = playerIn.posY + (double) playerIn.getEyeHeight();
+        final double d2 = playerIn.posZ;
+        final Vec3d vec3d = new Vec3d(d0, d1, d2);
+        final float f2 = MathHelper.cos(-f1 * 0.017453292F - (float) Math.PI);
+        final float f3 = MathHelper.sin(-f1 * 0.017453292F - (float) Math.PI);
+        final float f4 = -MathHelper.cos(-f * 0.017453292F);
+        final float f5 = MathHelper.sin(-f * 0.017453292F);
+        final float f6 = f3 * f4;
+        final float f7 = f2 * f4;
+        final double d3 = 5.0D;
+        final Vec3d vec3d1 = vec3d.add((double) f6 * d3, (double) f5 * d3, (double) f7 * d3);
+        final RayTraceResult result =
+                Minecraft.getMinecraft().world.rayTraceBlocks(vec3d, vec3d1, false, true, false);
         if (result != null && result.typeOfHit == RayTraceResult.Type.BLOCK) {
-            BlockPos pos = result.getBlockPos();
-            if (Minecraft.getMinecraft().world.getBlockState(pos).getBlock().getRegistryName().getNamespace().equals(Reference.MOD_ID)) {
-                Minecraft.getMinecraft().fontRenderer.drawString(TextFormatting.GOLD + "SNEAK" + TextFormatting.WHITE + "+" + TextFormatting.GOLD + "Right Click", event.getResolution().getScaledWidth() / 2 + 10, event.getResolution().getScaledHeight() / 2 - 5, 0xFFFFFF, true);
-                Minecraft.getMinecraft().fontRenderer.drawString(TextFormatting.YELLOW + "Open Block Description", event.getResolution().getScaledWidth() / 2 + 10, event.getResolution().getScaledHeight() / 2 - 5 + Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + 2, 0xFFFFFF, true);
+            final BlockPos pos = result.getBlockPos();
+            if (Minecraft.getMinecraft().world.getBlockState(pos).getBlock().getRegistryName()
+                    .getNamespace().equals(Reference.MOD_ID)) {
+                Minecraft.getMinecraft().fontRenderer.drawString(
+                        TextFormatting.GOLD + "SNEAK" + TextFormatting.WHITE + "+"
+                                + TextFormatting.GOLD + "Right Click",
+                        event.getResolution().getScaledWidth() / 2 + 10,
+                        event.getResolution().getScaledHeight() / 2 - 5, 0xFFFFFF, true);
+                Minecraft.getMinecraft().fontRenderer.drawString(
+                        TextFormatting.YELLOW + "Open Block Description",
+                        event.getResolution().getScaledWidth() / 2 + 10,
+                        event.getResolution().getScaledHeight() / 2 - 5
+                                + Minecraft.getMinecraft().fontRenderer.FONT_HEIGHT + 2,
+                        0xFFFFFF, true);
 
             }
         }

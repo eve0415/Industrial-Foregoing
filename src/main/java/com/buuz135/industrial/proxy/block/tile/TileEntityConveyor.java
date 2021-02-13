@@ -3,28 +3,34 @@
  *
  * Copyright 2019, Buuz135
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in the
- * Software without restriction, including without limitation the rights to use, copy,
- * modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
- * and to permit persons to whom the Software is furnished to do so, subject to the
- * following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+ * associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all copies
- * or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
- * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
- * PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
- * FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
- * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+ * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 package com.buuz135.industrial.proxy.block.tile;
 
+import static com.buuz135.industrial.proxy.block.BlockConveyor.FACING;
+import static com.buuz135.industrial.proxy.block.BlockConveyor.TYPE;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import com.buuz135.industrial.api.conveyor.ConveyorUpgrade;
 import com.buuz135.industrial.api.conveyor.ConveyorUpgradeFactory;
 import com.buuz135.industrial.api.conveyor.IConveyorContainer;
 import com.buuz135.industrial.proxy.block.BlockConveyor;
+import com.buuz135.industrial.proxy.block.BlockConveyor.EnumType;
 import com.buuz135.industrial.registry.IFRegistries;
 import com.buuz135.industrial.utils.MovementUtils;
 import net.minecraft.block.state.IBlockState;
@@ -43,20 +49,13 @@ import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static com.buuz135.industrial.proxy.block.BlockConveyor.*;
-
 public class TileEntityConveyor extends TileBase implements IConveyorContainer, ITickable {
 
     private EnumFacing facing;
     private EnumType type;
     private int color;
-    private Map<EnumFacing, ConveyorUpgrade> upgradeMap = new HashMap<>();
-    private List<Integer> filter;
+    private final Map<EnumFacing, ConveyorUpgrade> upgradeMap = new HashMap<>();
+    private final List<Integer> filter;
     private boolean sticky;
     private FluidTank tank;
     private boolean needsFluidSync;
@@ -91,15 +90,15 @@ public class TileEntityConveyor extends TileBase implements IConveyorContainer, 
     }
 
     @Override
-    public boolean hasUpgrade(EnumFacing facing) {
+    public boolean hasUpgrade(final EnumFacing facing) {
         return upgradeMap.containsKey(facing);
     }
 
     public int getPower() {
         int highestPower = 0;
-        for (ConveyorUpgrade upgrade : upgradeMap.values()) {
+        for (final ConveyorUpgrade upgrade : upgradeMap.values()) {
             if (upgrade != null) {
-                int power = upgrade.getRedstoneOutput();
+                final int power = upgrade.getRedstoneOutput();
                 if (power > highestPower)
                     highestPower = power;
             }
@@ -107,7 +106,7 @@ public class TileEntityConveyor extends TileBase implements IConveyorContainer, 
         return highestPower;
     }
 
-    public void addUpgrade(EnumFacing facing, ConveyorUpgradeFactory upgrade) {
+    public void addUpgrade(final EnumFacing facing, final ConveyorUpgradeFactory upgrade) {
         if (!hasUpgrade(facing)) {
             upgradeMap.put(facing, upgrade.create(this, facing));
             requestSync();
@@ -115,12 +114,13 @@ public class TileEntityConveyor extends TileBase implements IConveyorContainer, 
     }
 
     @Override
-    public void removeUpgrade(EnumFacing facing, boolean drop) {
+    public void removeUpgrade(final EnumFacing facing, final boolean drop) {
         if (hasUpgrade(facing)) {
             if (!world.isRemote && drop) {
-                ConveyorUpgrade upgrade = upgradeMap.get(facing);
-                for (ItemStack stack : upgrade.getDrops()) {
-                    EntityItem item = new EntityItem(world, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
+                final ConveyorUpgrade upgrade = upgradeMap.get(facing);
+                for (final ItemStack stack : upgrade.getDrops()) {
+                    final EntityItem item = new EntityItem(world, pos.getX() + 0.5,
+                            pos.getY() + 0.5, pos.getZ() + 0.5);
                     item.setItem(stack);
                     world.spawnEntity(item);
                 }
@@ -139,15 +139,20 @@ public class TileEntityConveyor extends TileBase implements IConveyorContainer, 
     @Override
     public void update() {
         if (type.isVertical() && !upgradeMap.isEmpty()) {
-            new ArrayList<>(upgradeMap.keySet()).forEach(facing1 -> this.removeUpgrade(facing1, true));
+            new ArrayList<>(upgradeMap.keySet())
+                    .forEach(facing1 -> this.removeUpgrade(facing1, true));
         }
         upgradeMap.values().forEach(ConveyorUpgrade::update);
-        if (!world.isRemote && tank.getFluidAmount() > 0 && world.getTotalWorldTime() % 3 == 0 && world.getBlockState(this.pos.offset(facing)).getBlock() instanceof BlockConveyor && world.getTileEntity(this.pos.offset(facing)) instanceof TileEntityConveyor) {
-            IBlockState state = world.getBlockState(this.pos.offset(facing));
+        if (!world.isRemote && tank.getFluidAmount() > 0 && world.getTotalWorldTime() % 3 == 0
+                && world.getBlockState(this.pos.offset(facing)).getBlock() instanceof BlockConveyor
+                && world.getTileEntity(this.pos.offset(facing)) instanceof TileEntityConveyor) {
+            final IBlockState state = world.getBlockState(this.pos.offset(facing));
             if (!state.getValue(BlockConveyor.TYPE).isVertical()) {
-                int amount = Math.max(tank.getFluidAmount() - 1, 1);
-                TileEntityConveyor tileEntityConveyor = (TileEntityConveyor) world.getTileEntity(this.pos.offset(facing));
-                FluidStack drained = tank.drain(tileEntityConveyor.getTank().fill(tank.drain(amount, false), true), true);
+                final int amount = Math.max(tank.getFluidAmount() - 1, 1);
+                final TileEntityConveyor tileEntityConveyor =
+                        (TileEntityConveyor) world.getTileEntity(this.pos.offset(facing));
+                final FluidStack drained = tank.drain(
+                        tileEntityConveyor.getTank().fill(tank.drain(amount, false), true), true);
                 if (drained != null && drained.amount > 0) {
                     this.requestFluidSync();
                     tileEntityConveyor.requestFluidSync();
@@ -164,7 +169,7 @@ public class TileEntityConveyor extends TileBase implements IConveyorContainer, 
         return facing;
     }
 
-    public void setFacing(EnumFacing facing) {
+    public void setFacing(final EnumFacing facing) {
         this.facing = facing;
         markForUpdate();
     }
@@ -173,7 +178,7 @@ public class TileEntityConveyor extends TileBase implements IConveyorContainer, 
         return type;
     }
 
-    public void setType(EnumType type) {
+    public void setType(final EnumType type) {
         this.type = type;
         markForUpdate();
     }
@@ -182,12 +187,12 @@ public class TileEntityConveyor extends TileBase implements IConveyorContainer, 
         return color;
     }
 
-    public void setColor(int color) {
+    public void setColor(final int color) {
         this.color = color;
         markForUpdate();
     }
 
-    public void setColor(EnumDyeColor color) {
+    public void setColor(final EnumDyeColor color) {
         this.color = color.getDyeDamage();
         markForUpdate();
     }
@@ -196,7 +201,7 @@ public class TileEntityConveyor extends TileBase implements IConveyorContainer, 
         return sticky;
     }
 
-    public void setSticky(boolean sticky) {
+    public void setSticky(final boolean sticky) {
         this.sticky = sticky;
         markForUpdate();
     }
@@ -208,14 +213,14 @@ public class TileEntityConveyor extends TileBase implements IConveyorContainer, 
         compound.setString("Type", type.getName());
         compound.setInteger("Color", color);
         compound.setBoolean("Sticky", sticky);
-        NBTTagCompound upgrades = new NBTTagCompound();
-        for (EnumFacing facing : EnumFacing.VALUES) {
+        final NBTTagCompound upgrades = new NBTTagCompound();
+        for (final EnumFacing facing : EnumFacing.VALUES) {
             if (!hasUpgrade(facing))
                 continue;
-            NBTTagCompound upgradeTag = new NBTTagCompound();
-            ConveyorUpgrade upgrade = upgradeMap.get(facing);
+            final NBTTagCompound upgradeTag = new NBTTagCompound();
+            final ConveyorUpgrade upgrade = upgradeMap.get(facing);
             upgradeTag.setString("factory", upgrade.getFactory().getRegistryName().toString());
-            NBTTagCompound customNBT = upgrade.serializeNBT();
+            final NBTTagCompound customNBT = upgrade.serializeNBT();
             if (customNBT != null)
                 upgradeTag.setTag("customNBT", customNBT);
             upgrades.setTag(facing.getName(), upgradeTag);
@@ -226,31 +231,33 @@ public class TileEntityConveyor extends TileBase implements IConveyorContainer, 
     }
 
     @Override
-    protected void setWorldCreate(World worldIn) {
+    protected void setWorldCreate(final World worldIn) {
         super.setWorldCreate(worldIn);
         this.world = worldIn;
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound compound) {
+    public void readFromNBT(final NBTTagCompound compound) {
         super.readFromNBT(compound);
         this.facing = EnumFacing.byName(compound.getString("Facing"));
         this.type = BlockConveyor.EnumType.getFromName(compound.getString("Type"));
         this.color = compound.getInteger("Color");
         this.sticky = compound.getBoolean("Sticky");
         if (compound.hasKey("Upgrades", Constants.NBT.TAG_COMPOUND)) {
-            NBTTagCompound upgradesTag = compound.getCompoundTag("Upgrades");
-            //upgradeMap.clear();
-            for (EnumFacing facing : EnumFacing.VALUES) {
+            final NBTTagCompound upgradesTag = compound.getCompoundTag("Upgrades");
+            // upgradeMap.clear();
+            for (final EnumFacing facing : EnumFacing.VALUES) {
                 if (!upgradesTag.hasKey(facing.getName()))
                     continue;
-                NBTTagCompound upgradeTag = upgradesTag.getCompoundTag(facing.getName());
-                ConveyorUpgradeFactory factory = IFRegistries.CONVEYOR_UPGRADE_REGISTRY.getValue(new ResourceLocation(upgradeTag.getString("factory")));
+                final NBTTagCompound upgradeTag = upgradesTag.getCompoundTag(facing.getName());
+                final ConveyorUpgradeFactory factory = IFRegistries.CONVEYOR_UPGRADE_REGISTRY
+                        .getValue(new ResourceLocation(upgradeTag.getString("factory")));
                 if (factory != null) {
-                    ConveyorUpgrade upgrade = upgradeMap.getOrDefault(facing, factory.create(this, facing));
+                    final ConveyorUpgrade upgrade =
+                            upgradeMap.getOrDefault(facing, factory.create(this, facing));
                     if (upgradeTag.hasKey("customNBT", Constants.NBT.TAG_COMPOUND)) {
                         upgrade.deserializeNBT(upgradeTag.getCompoundTag("customNBT"));
-                        //upgradeMap.get(facing).deserializeNBT(upgradeTag.getCompoundTag("customNBT"));
+                        // upgradeMap.get(facing).deserializeNBT(upgradeTag.getCompoundTag("customNBT"));
                     }
                     upgradeMap.put(facing, upgrade);
                 }
@@ -262,30 +269,35 @@ public class TileEntityConveyor extends TileBase implements IConveyorContainer, 
     }
 
     public void markForUpdate() {
-        this.world.setBlockState(pos, this.world.getBlockState(pos).withProperty(TYPE, type).withProperty(FACING, facing));
-        this.world.notifyBlockUpdate(getPos(), getWorld().getBlockState(getPos()), getWorld().getBlockState(getPos()), 3);
+        this.world.setBlockState(pos, this.world.getBlockState(pos).withProperty(TYPE, type)
+                .withProperty(FACING, facing));
+        this.world.notifyBlockUpdate(getPos(), getWorld().getBlockState(getPos()),
+                getWorld().getBlockState(getPos()), 3);
         markDirty();
     }
 
     public List<AxisAlignedBB> getCollisionBoxes() {
-        List<AxisAlignedBB> boxes = new ArrayList<>();
+        final List<AxisAlignedBB> boxes = new ArrayList<>();
         EnumFacing facing = this.facing;
-        if (type.isDown()) facing = facing.getOpposite();
+        if (type.isDown())
+            facing = facing.getOpposite();
         double height = 1;
         while (height > 0) {
             if (facing == EnumFacing.NORTH || facing == EnumFacing.SOUTH) {
-                boxes.add(new AxisAlignedBB(0, 0, facing == EnumFacing.NORTH ? 0 : 1D - height, 1, 1 - height, facing == EnumFacing.NORTH ? height : 1));
+                boxes.add(new AxisAlignedBB(0, 0, facing == EnumFacing.NORTH ? 0 : 1D - height, 1,
+                        1 - height, facing == EnumFacing.NORTH ? height : 1));
             }
             if (facing == EnumFacing.WEST || facing == EnumFacing.EAST) {
-                boxes.add(new AxisAlignedBB(facing == EnumFacing.WEST ? 0 : 1D - height, 0, 0, facing == EnumFacing.WEST ? height : 1, 1 - height, 1));
+                boxes.add(new AxisAlignedBB(facing == EnumFacing.WEST ? 0 : 1D - height, 0, 0,
+                        facing == EnumFacing.WEST ? height : 1, 1 - height, 1));
             }
             height -= 0.1D;
         }
         return boxes;
     }
 
-    public void handleEntityMovement(Entity entity) {
-        for (ConveyorUpgrade upgrade : upgradeMap.values()) {
+    public void handleEntityMovement(final Entity entity) {
+        for (final ConveyorUpgrade upgrade : upgradeMap.values()) {
             if (upgrade != null) {
                 upgrade.handleEntity(entity);
             }
@@ -293,7 +305,8 @@ public class TileEntityConveyor extends TileBase implements IConveyorContainer, 
         if (!entity.isDead) {
             if (!this.getEntityFilter().contains(entity.getEntityId()))
                 MovementUtils.handleConveyorMovement(entity, facing, this.pos, type);
-            if (entity instanceof EntityItem && sticky) ((EntityItem) entity).setPickupDelay(5);
+            if (entity instanceof EntityItem && sticky)
+                ((EntityItem) entity).setPickupDelay(5);
         }
     }
 

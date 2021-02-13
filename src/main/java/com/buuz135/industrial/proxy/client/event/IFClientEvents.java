@@ -3,24 +3,24 @@
  *
  * Copyright 2019, Buuz135
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in the
- * Software without restriction, including without limitation the rights to use, copy,
- * modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
- * and to permit persons to whom the Software is furnished to do so, subject to the
- * following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+ * associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all copies
- * or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
- * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
- * PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
- * FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
- * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+ * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 package com.buuz135.industrial.proxy.client.event;
 
+import java.util.Calendar;
 import com.buuz135.industrial.api.conveyor.ConveyorUpgradeFactory;
 import com.buuz135.industrial.config.CustomConfiguration;
 import com.buuz135.industrial.item.infinity.ItemInfinityDrill;
@@ -32,6 +32,7 @@ import com.buuz135.industrial.proxy.block.DistanceRayTraceResult;
 import com.buuz135.industrial.proxy.client.model.ConveyorBlockModel;
 import com.buuz135.industrial.registry.IFRegistries;
 import com.buuz135.industrial.utils.Reference;
+import org.apache.commons.lang3.tuple.Pair;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -56,132 +57,195 @@ import net.minecraftforge.client.model.ModelLoaderRegistry;
 import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import org.apache.commons.lang3.tuple.Pair;
-
-import java.util.Calendar;
 
 public class IFClientEvents {
 
-    @SubscribeEvent
-    public void textureStich(TextureStitchEvent.Pre pre) {
-        pre.getMap().registerSprite(new ResourceLocation(Reference.MOD_ID, "blocks/catears"));
-        for (ConveyorUpgradeFactory factory : IFRegistries.CONVEYOR_UPGRADE_REGISTRY.getValuesCollection()) {
-            factory.getTextures().forEach(pre.getMap()::registerSprite);
+        @SubscribeEvent
+        public void textureStich(final TextureStitchEvent.Pre pre) {
+                pre.getMap().registerSprite(
+                                new ResourceLocation(Reference.MOD_ID, "blocks/catears"));
+                for (final ConveyorUpgradeFactory factory : IFRegistries.CONVEYOR_UPGRADE_REGISTRY
+                                .getValuesCollection()) {
+                        factory.getTextures().forEach(pre.getMap()::registerSprite);
+                }
+                pre.getMap().registerSprite(FluidsRegistry.ORE_FLUID_RAW.getStill());
+                pre.getMap().registerSprite(FluidsRegistry.ORE_FLUID_RAW.getFlowing());
+                pre.getMap().registerSprite(FluidsRegistry.ORE_FLUID_FERMENTED.getStill());
+                pre.getMap().registerSprite(FluidsRegistry.ORE_FLUID_FERMENTED.getFlowing());
         }
-        pre.getMap().registerSprite(FluidsRegistry.ORE_FLUID_RAW.getStill());
-        pre.getMap().registerSprite(FluidsRegistry.ORE_FLUID_RAW.getFlowing());
-        pre.getMap().registerSprite(FluidsRegistry.ORE_FLUID_FERMENTED.getStill());
-        pre.getMap().registerSprite(FluidsRegistry.ORE_FLUID_FERMENTED.getFlowing());
-    }
 
-    @SubscribeEvent
-    public void modelBake(ModelBakeEvent event) {
-        boolean isApril = Calendar.getInstance().get(Calendar.MONTH) == Calendar.APRIL && Calendar.getInstance().get(Calendar.DAY_OF_MONTH) == 1;
-        for (ModelResourceLocation resourceLocation : event.getModelRegistry().getKeys()) {
-            if (resourceLocation.getNamespace().equals(Reference.MOD_ID)) {
-                if (resourceLocation.getPath().contains("conveyor") && !resourceLocation.getPath().contains("upgrade"))
-                    event.getModelRegistry().putObject(resourceLocation, new ConveyorBlockModel(event.getModelRegistry().getObject(resourceLocation)));
-                if (isApril && CustomConfiguration.enableMultiblockEdition) {
-                    try {
-                        IModel model = ModelLoaderRegistry.getModel(resourceLocation);
-                        model.getDependencies().forEach(dep -> {
-                            try {
-                                ModelLoaderRegistry.getModel(dep).asVanillaModel().ifPresent(modelBlock -> {
-                                    if (modelBlock.parent != null) {
-                                        if (modelBlock.parent.name.equals(new ResourceLocation(Reference.MOD_ID, "models/block/base_block").toString())) {
-                                            try {
-                                                ModelLoaderRegistry.getModel(new ResourceLocation(Reference.MOD_ID, "block/base_block_multiblock")).asVanillaModel().ifPresent(modelBlockParent -> modelBlock.parent = modelBlockParent);
-                                            } catch (Exception e) {
+        @SubscribeEvent
+        public void modelBake(final ModelBakeEvent event) {
+                final boolean isApril = Calendar.getInstance().get(Calendar.MONTH) == Calendar.APRIL
+                                && Calendar.getInstance().get(Calendar.DAY_OF_MONTH) == 1;
+                for (final ModelResourceLocation resourceLocation : event.getModelRegistry()
+                                .getKeys()) {
+                        if (resourceLocation.getNamespace().equals(Reference.MOD_ID)) {
+                                if (resourceLocation.getPath().contains("conveyor")
+                                                && !resourceLocation.getPath().contains("upgrade"))
+                                        event.getModelRegistry().putObject(resourceLocation,
+                                                        new ConveyorBlockModel(event
+                                                                        .getModelRegistry()
+                                                                        .getObject(resourceLocation)));
+                                if (isApril && CustomConfiguration.enableMultiblockEdition) {
+                                        try {
+                                                final IModel model = ModelLoaderRegistry
+                                                                .getModel(resourceLocation);
+                                                model.getDependencies().forEach(dep -> {
+                                                        try {
+                                                                ModelLoaderRegistry.getModel(dep)
+                                                                                .asVanillaModel()
+                                                                                .ifPresent(modelBlock -> {
+                                                                                        if (modelBlock.parent != null) {
+                                                                                                if (modelBlock.parent.name
+                                                                                                                .equals(new ResourceLocation(
+                                                                                                                                Reference.MOD_ID,
+                                                                                                                                "models/block/base_block")
+                                                                                                                                                .toString())) {
+                                                                                                        try {
+                                                                                                                ModelLoaderRegistry
+                                                                                                                                .getModel(new ResourceLocation(
+                                                                                                                                                Reference.MOD_ID,
+                                                                                                                                                "block/base_block_multiblock"))
+                                                                                                                                .asVanillaModel()
+                                                                                                                                .ifPresent(modelBlockParent -> modelBlock.parent =
+                                                                                                                                                modelBlockParent);
+                                                                                                        } catch (final Exception e) {
+                                                                                                                e.printStackTrace();
+                                                                                                        }
+                                                                                                }
+                                                                                                if (modelBlock.parent.name
+                                                                                                                .equals(new ResourceLocation(
+                                                                                                                                Reference.MOD_ID,
+                                                                                                                                "models/block/base_block_multiblock")
+                                                                                                                                                .toString()))
+                                                                                                        event.getModelRegistry()
+                                                                                                                        .putObject(resourceLocation,
+                                                                                                                                        model.bake(model.getDefaultState(),
+                                                                                                                                                        DefaultVertexFormats.BLOCK,
+                                                                                                                                                        ModelLoader.defaultTextureGetter()));
+                                                                                        }
+                                                                                });
+                                                        } catch (final Exception e) {
+                                                                e.printStackTrace();
+                                                        }
+                                                });
+                                        } catch (final Exception e) {
                                                 e.printStackTrace();
-                                            }
                                         }
-                                        if (modelBlock.parent.name.equals(new ResourceLocation(Reference.MOD_ID, "models/block/base_block_multiblock").toString()))
-                                            event.getModelRegistry().putObject(resourceLocation, model.bake(model.getDefaultState(), DefaultVertexFormats.BLOCK, ModelLoader.defaultTextureGetter()));
-                                    }
-                                });
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
+                                }
+                        }
+                }
+                for (final ConveyorUpgradeFactory conveyorUpgradeFactory : GameRegistry
+                                .findRegistry(ConveyorUpgradeFactory.class).getValuesCollection()) {
+                        for (final EnumFacing upgradeFacing : conveyorUpgradeFactory
+                                        .getValidFacings()) {
+                                for (final EnumFacing conveyorFacing : BlockConveyor.FACING
+                                                .getAllowedValues()) {
+                                        try {
+                                                ModelLoaderRegistry.getModel(conveyorUpgradeFactory
+                                                                .getModel(upgradeFacing,
+                                                                                conveyorFacing));
+                                        } catch (final Exception e) {
+                                                e.printStackTrace();
+                                        }
+                                }
+                        }
+                }
+        }
+
+        @SubscribeEvent
+        public void blockOverlayEvent(final DrawBlockHighlightEvent event) {
+                final RayTraceResult hit = event.getTarget();
+                if (hit.typeOfHit == RayTraceResult.Type.BLOCK
+                                && hit instanceof DistanceRayTraceResult) {
+                        final BlockPos pos = event.getTarget().getBlockPos();
+                        event.setCanceled(true);
+                        GlStateManager.enableBlend();
+                        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
+                                        GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
+                                        GlStateManager.SourceFactor.ONE,
+                                        GlStateManager.DestFactor.ZERO);
+                        GlStateManager.glLineWidth(2.0F);
+                        GlStateManager.disableTexture2D();
+                        GlStateManager.depthMask(false);
+
+                        final EntityPlayer player = event.getPlayer();
+                        final double x = player.lastTickPosX + (player.posX - player.lastTickPosX)
+                                        * event.getPartialTicks();
+                        final double y = player.lastTickPosY + (player.posY - player.lastTickPosY)
+                                        * event.getPartialTicks();
+                        final double z = player.lastTickPosZ + (player.posZ - player.lastTickPosZ)
+                                        * event.getPartialTicks();
+                        RenderGlobal.drawSelectionBoundingBox(
+                                        ((Cuboid) ((DistanceRayTraceResult) event
+                                                        .getTarget()).hitInfo).aabb()
+                                                                        .offset(-x, -y, -z)
+                                                                        .offset(pos).grow(0.002),
+                                        0.0F, 0.0F, 0.0F, 0.4F);
+
+                        GlStateManager.depthMask(true);
+                        GlStateManager.enableTexture2D();
+                        GlStateManager.disableBlend();
+                }
+                if (hit.typeOfHit == RayTraceResult.Type.BLOCK
+                                && event.getPlayer().getHeldItemMainhand().getItem()
+                                                .equals(ItemRegistry.itemInfinityDrill)) {
+                        event.setCanceled(true);
+                        final ItemStack hand = event.getPlayer().getHeldItemMainhand();
+                        final ItemInfinityDrill.DrillTier tier =
+                                        ItemRegistry.itemInfinityDrill.getSelectedDrillTier(hand);
+                        final World world = event.getPlayer().world;
+                        final Pair<BlockPos, BlockPos> area = ItemRegistry.itemInfinityDrill
+                                        .getArea(event.getTarget().getBlockPos(),
+                                                        event.getTarget().sideHit, tier, false);
+                        GlStateManager.enableBlend();
+                        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA,
+                                        GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
+                                        GlStateManager.SourceFactor.ONE,
+                                        GlStateManager.DestFactor.ZERO);
+                        GlStateManager.glLineWidth(2.0F);
+                        GlStateManager.disableTexture2D();
+                        GlStateManager.depthMask(false);
+                        final EntityPlayer player = event.getPlayer();
+                        final double x = player.lastTickPosX + (player.posX - player.lastTickPosX)
+                                        * event.getPartialTicks();
+                        final double y = player.lastTickPosY + (player.posY - player.lastTickPosY)
+                                        * event.getPartialTicks();
+                        final double z = player.lastTickPosZ + (player.posZ - player.lastTickPosZ)
+                                        * event.getPartialTicks();
+                        BlockPos.getAllInBox(area.getLeft(), area.getRight()).forEach(blockPos -> {
+                                if (!world.isAirBlock(blockPos)
+                                                && world.getBlockState(blockPos).getBlockHardness(
+                                                                world, blockPos) >= 0
+                                                && !(world.getBlockState(blockPos)
+                                                                .getBlock() instanceof IFluidBlock)
+                                                && !(world.getBlockState(blockPos)
+                                                                .getBlock() instanceof BlockLiquid)) {
+                                        RenderGlobal.drawSelectionBoundingBox(world
+                                                        .getBlockState(blockPos)
+                                                        .getSelectedBoundingBox(world, blockPos)
+                                                        .offset(-x, -y, -z).grow(0.001), 0.0F, 0.0F,
+                                                        0.0F, 0.4F);
+                                }
                         });
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                        GlStateManager.depthMask(true);
+                        GlStateManager.enableTexture2D();
+                        GlStateManager.disableBlend();
                 }
-            }
         }
-        for (ConveyorUpgradeFactory conveyorUpgradeFactory : GameRegistry.findRegistry(ConveyorUpgradeFactory.class).getValuesCollection()) {
-            for (EnumFacing upgradeFacing : conveyorUpgradeFactory.getValidFacings()) {
-                for (EnumFacing conveyorFacing : BlockConveyor.FACING.getAllowedValues()) {
-                    try {
-                        ModelLoaderRegistry.getModel(conveyorUpgradeFactory.getModel(upgradeFacing, conveyorFacing));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
+
+        @SubscribeEvent
+        public void onRenderPre(final RenderPlayerEvent.Pre event) {
+                if (event.getEntityPlayer().getUniqueID()
+                                .equals(Minecraft.getMinecraft().player.getUniqueID())
+                                && Minecraft.getMinecraft().gameSettings.thirdPersonView == 0)
+                        return;
+                if (event.getEntityPlayer().getHeldItem(EnumHand.MAIN_HAND).getItem()
+                                .equals(ItemRegistry.itemInfinityDrill))
+                        event.getEntityPlayer().setActiveHand(EnumHand.MAIN_HAND);
+                else if (event.getEntityPlayer().getHeldItem(EnumHand.OFF_HAND).getItem()
+                                .equals(ItemRegistry.itemInfinityDrill))
+                        event.getEntityPlayer().setActiveHand(EnumHand.OFF_HAND);
         }
-    }
-
-    @SubscribeEvent
-    public void blockOverlayEvent(DrawBlockHighlightEvent event) {
-        RayTraceResult hit = event.getTarget();
-        if (hit.typeOfHit == RayTraceResult.Type.BLOCK && hit instanceof DistanceRayTraceResult) {
-            BlockPos pos = event.getTarget().getBlockPos();
-            event.setCanceled(true);
-            GlStateManager.enableBlend();
-            GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
-                    GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-            GlStateManager.glLineWidth(2.0F);
-            GlStateManager.disableTexture2D();
-            GlStateManager.depthMask(false);
-
-            EntityPlayer player = event.getPlayer();
-            double x = player.lastTickPosX + (player.posX - player.lastTickPosX) * event.getPartialTicks();
-            double y = player.lastTickPosY + (player.posY - player.lastTickPosY) * event.getPartialTicks();
-            double z = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * event.getPartialTicks();
-            RenderGlobal.drawSelectionBoundingBox(((Cuboid) ((DistanceRayTraceResult) event.getTarget()).hitInfo).aabb().offset(-x, -y, -z).offset(pos).grow(0.002),
-                    0.0F, 0.0F, 0.0F, 0.4F
-            );
-
-            GlStateManager.depthMask(true);
-            GlStateManager.enableTexture2D();
-            GlStateManager.disableBlend();
-        }
-        if (hit.typeOfHit == RayTraceResult.Type.BLOCK && event.getPlayer().getHeldItemMainhand().getItem().equals(ItemRegistry.itemInfinityDrill)) {
-            event.setCanceled(true);
-            ItemStack hand = event.getPlayer().getHeldItemMainhand();
-            ItemInfinityDrill.DrillTier tier = ItemRegistry.itemInfinityDrill.getSelectedDrillTier(hand);
-            World world = event.getPlayer().world;
-            Pair<BlockPos, BlockPos> area = ItemRegistry.itemInfinityDrill.getArea(event.getTarget().getBlockPos(), event.getTarget().sideHit, tier, false);
-            GlStateManager.enableBlend();
-            GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
-                    GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-            GlStateManager.glLineWidth(2.0F);
-            GlStateManager.disableTexture2D();
-            GlStateManager.depthMask(false);
-            EntityPlayer player = event.getPlayer();
-            double x = player.lastTickPosX + (player.posX - player.lastTickPosX) * event.getPartialTicks();
-            double y = player.lastTickPosY + (player.posY - player.lastTickPosY) * event.getPartialTicks();
-            double z = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * event.getPartialTicks();
-            BlockPos.getAllInBox(area.getLeft(), area.getRight()).forEach(blockPos -> {
-                if (!world.isAirBlock(blockPos) && world.getBlockState(blockPos).getBlockHardness(world, blockPos) >= 0 && !(world.getBlockState(blockPos).getBlock() instanceof IFluidBlock) && !(world.getBlockState(blockPos).getBlock() instanceof BlockLiquid)) {
-                    RenderGlobal.drawSelectionBoundingBox(world.getBlockState(blockPos).getBlock().getSelectedBoundingBox(world.getBlockState(blockPos), world, blockPos).offset(-x, -y, -z).
-                            grow(0.001), 0.0F, 0.0F, 0.0F, 0.4F);
-                }
-            });
-            GlStateManager.depthMask(true);
-            GlStateManager.enableTexture2D();
-            GlStateManager.disableBlend();
-        }
-    }
-
-    @SubscribeEvent
-    public void onRenderPre(RenderPlayerEvent.Pre event) {
-        if (event.getEntityPlayer().getUniqueID().equals(Minecraft.getMinecraft().player.getUniqueID()) && Minecraft.getMinecraft().gameSettings.thirdPersonView == 0)
-            return;
-        if (event.getEntityPlayer().getHeldItem(EnumHand.MAIN_HAND).getItem().equals(ItemRegistry.itemInfinityDrill))
-            event.getEntityPlayer().setActiveHand(EnumHand.MAIN_HAND);
-        else if (event.getEntityPlayer().getHeldItem(EnumHand.OFF_HAND).getItem().equals(ItemRegistry.itemInfinityDrill))
-            event.getEntityPlayer().setActiveHand(EnumHand.OFF_HAND);
-    }
 }

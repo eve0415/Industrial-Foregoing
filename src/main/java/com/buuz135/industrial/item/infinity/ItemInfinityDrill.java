@@ -3,25 +3,28 @@
  *
  * Copyright 2019, Buuz135
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in the
- * Software without restriction, including without limitation the rights to use, copy,
- * modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
- * and to permit persons to whom the Software is furnished to do so, subject to the
- * following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+ * associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all copies
- * or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
- * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
- * PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
- * FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
- * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+ * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 package com.buuz135.industrial.item.infinity;
 
-
+import java.text.DecimalFormat;
+import java.util.List;
+import java.util.Set;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.buuz135.industrial.item.IFCustomItem;
 import com.buuz135.industrial.proxy.BlockRegistry;
 import com.buuz135.industrial.proxy.CommonProxy;
@@ -31,6 +34,7 @@ import com.buuz135.industrial.utils.RayTraceUtils;
 import com.buuz135.industrial.utils.RecipeUtils;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
+import org.apache.commons.lang3.tuple.Pair;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -73,17 +77,12 @@ import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
-import org.apache.commons.lang3.tuple.Pair;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.text.DecimalFormat;
-import java.util.List;
-import java.util.Set;
 
 public class ItemInfinityDrill extends IFCustomItem {
 
-    public static Material[] mineableMaterials = {Material.ANVIL, Material.CLAY, Material.GLASS, Material.GRASS, Material.GROUND, Material.ICE, Material.IRON, Material.PACKED_ICE, Material.PISTON, Material.ROCK, Material.SAND, Material.SNOW};
+    public static Material[] mineableMaterials = {Material.ANVIL, Material.CLAY, Material.GLASS,
+            Material.GRASS, Material.GROUND, Material.ICE, Material.IRON, Material.PACKED_ICE,
+            Material.PISTON, Material.ROCK, Material.SAND, Material.SNOW};
     public static int POWER_CONSUMPTION = 10000;
     public static int FUEL_CONSUMPTION = 3;
 
@@ -97,23 +96,19 @@ public class ItemInfinityDrill extends IFCustomItem {
 
     @Override
     public void createRecipe() {
-        RecipeUtils.addShapedRecipe(new ItemStack(this), " ID", "PRI", "PT ",
-                'I', Blocks.IRON_BLOCK,
-                'D', Blocks.DIAMOND_BLOCK,
-                'P', ItemRegistry.pinkSlimeIngot,
-                'R', BlockRegistry.laserDrillBlock,
-                'T', BlockRegistry.blackHoleTankBlock
-        );
+        RecipeUtils.addShapedRecipe(new ItemStack(this), " ID", "PRI", "PT ", 'I',
+                Blocks.IRON_BLOCK, 'D', Blocks.DIAMOND_BLOCK, 'P', ItemRegistry.pinkSlimeIngot, 'R',
+                BlockRegistry.laserDrillBlock, 'T', BlockRegistry.blackHoleTankBlock);
     }
 
     @Override
-    public void onCreated(ItemStack stack, World worldIn, EntityPlayer playerIn) {
+    public void onCreated(final ItemStack stack, final World worldIn, final EntityPlayer playerIn) {
         super.onCreated(stack, worldIn, playerIn);
         addNbt(stack, 0, 0, CommonProxy.CONTRIBUTORS.contains(playerIn.getUniqueID().toString()));
     }
 
     @Override
-    public boolean isEnchantable(ItemStack stack) {
+    public boolean isEnchantable(final ItemStack stack) {
         return true;
     }
 
@@ -123,14 +118,14 @@ public class ItemInfinityDrill extends IFCustomItem {
     }
 
     @Override
-    public boolean canApplyAtEnchantingTable(ItemStack stack, Enchantment enchantment) {
+    public boolean canApplyAtEnchantingTable(final ItemStack stack, final Enchantment enchantment) {
         return enchantment.type == EnumEnchantmentType.DIGGER;
     }
 
     @Override
-    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
+    public void getSubItems(final CreativeTabs tab, final NonNullList<ItemStack> items) {
         if (isInCreativeTab(tab)) {
-            for (DrillTier value : DrillTier.values()) {
+            for (final DrillTier value : DrillTier.values()) {
                 items.add(createStack(value.getPowerNeeded(), 0, false));
             }
             items.add(createStack(DrillTier.ARTIFACT.getPowerNeeded(), 1_000_000, true));
@@ -138,18 +133,19 @@ public class ItemInfinityDrill extends IFCustomItem {
     }
 
     @Override
-    public EnumAction getItemUseAction(ItemStack stack) {
+    public EnumAction getItemUseAction(final ItemStack stack) {
         return EnumAction.BOW;
     }
 
     @Override
-    public Set<String> getToolClasses(ItemStack stack) {
+    public Set<String> getToolClasses(final ItemStack stack) {
         return ImmutableSet.of("pickaxe", "shovel");
     }
 
     @Override
-    public boolean canHarvestBlock(IBlockState blockIn) {
-        return Items.DIAMOND_PICKAXE.canHarvestBlock(blockIn) || Items.DIAMOND_SHOVEL.canHarvestBlock(blockIn);
+    public boolean canHarvestBlock(final IBlockState blockIn) {
+        return Items.DIAMOND_PICKAXE.canHarvestBlock(blockIn)
+                || Items.DIAMOND_SHOVEL.canHarvestBlock(blockIn);
     }
 
     @Override
@@ -158,74 +154,91 @@ public class ItemInfinityDrill extends IFCustomItem {
     }
 
     @Override
-    public boolean onEntitySwing(EntityLivingBase entityLiving, ItemStack stack) {
+    public boolean onEntitySwing(final EntityLivingBase entityLiving, final ItemStack stack) {
         return true;
     }
 
     @Override
-    public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
+    public boolean shouldCauseReequipAnimation(final ItemStack oldStack, final ItemStack newStack,
+            final boolean slotChanged) {
         return slotChanged && !oldStack.equals(newStack);
     }
 
     @Override
-    public int getMaxItemUseDuration(ItemStack stack) {
+    public int getMaxItemUseDuration(final ItemStack stack) {
         return 720000;
     }
 
     @Override
-    public float getDestroySpeed(ItemStack stack, IBlockState state) {
+    public float getDestroySpeed(final ItemStack stack, final IBlockState state) {
         return enoughFuel(stack) ? 10F : 0;
     }
 
     @Override
-    public boolean shouldCauseBlockBreakReset(ItemStack oldStack, ItemStack newStack) {
+    public boolean shouldCauseBlockBreakReset(final ItemStack oldStack, final ItemStack newStack) {
         return !oldStack.isItemEqual(newStack);
     }
 
     @Nullable
     @Override
-    public ICapabilityProvider initCapabilities(ItemStack stack, @Nullable NBTTagCompound nbt) {
+    public ICapabilityProvider initCapabilities(final ItemStack stack,
+            @Nullable final NBTTagCompound nbt) {
         return new InfinityDrillCapabilityProvider(stack);
     }
 
     @Override
-    public boolean showDurabilityBar(ItemStack stack) {
+    public boolean showDurabilityBar(final ItemStack stack) {
         return true;
     }
 
     @Override
-    public double getDurabilityForDisplay(ItemStack stack) {
+    public double getDurabilityForDisplay(final ItemStack stack) {
         if (GuiScreen.isShiftKeyDown()) {
-            int fuel = getFuelFromStack(stack);
+            final int fuel = getFuelFromStack(stack);
             return 1 - fuel / 1_000_000D;
         } else {
-            long power = getPowerFromStack(stack);
+            final long power = getPowerFromStack(stack);
             return 1 - power / (double) DrillTier.getTierBraquet(power).getRight().getPowerNeeded();
         }
     }
 
     @Override
-    public int getRGBDurabilityForDisplay(ItemStack stack) {
-        return GuiScreen.isShiftKeyDown() ? 0xcb00ff /*Purple*/ : 0x00d0ff /*Cyan*/;
+    public int getRGBDurabilityForDisplay(final ItemStack stack) {
+        return GuiScreen.isShiftKeyDown() ? 0xcb00ff /* Purple */ : 0x00d0ff /* Cyan */;
     }
 
     @Override
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
+    public void addInformation(final ItemStack stack, @Nullable final World worldIn,
+            final List<String> tooltip, final ITooltipFlag flagIn) {
         super.addInformation(stack, worldIn, tooltip, flagIn);
-        long power = getPowerFromStack(stack);
-        Pair<DrillTier, DrillTier> braquet = DrillTier.getTierBraquet(power);
-        DrillTier current = getSelectedDrillTier(stack);
-        tooltip.add(new TextComponentTranslation("text.industrialforegoing.display.current_area").getUnformattedText() + " " + getFormattedArea(current, current.getRadius()));
-        tooltip.add(new TextComponentTranslation("text.industrialforegoing.display.tier").getUnformattedText() + " " + braquet.getLeft().getColor() + braquet.getLeft().getLocalizedName());
-        tooltip.add(new TextComponentTranslation("text.industrialforegoing.display.power").getUnformattedText() + " " + new DecimalFormat().format(power) + "/" + new DecimalFormat().format(braquet.getRight().getPowerNeeded()) + "RF " + new TextComponentTranslation("text.industrialforegoing.display.next_tier").getUnformattedText());
-        int fuelAmount = getFuelFromStack(stack);
-        tooltip.add(new TextComponentTranslation("text.industrialforegoing.display.fluid").getUnformattedText() + " " + new DecimalFormat().format(fuelAmount) + "/" + new DecimalFormat().format(1000000) + " mb " + new TextComponentTranslation(FluidsRegistry.BIOFUEL.getUnlocalizedName()).getUnformattedComponentText());
-        tooltip.add(new TextComponentTranslation("text.industrialforegoing.display.max_area").getUnformattedText() + " " + getFormattedArea(braquet.getLeft(), braquet.getLeft().getRadius()));
+        final long power = getPowerFromStack(stack);
+        final Pair<DrillTier, DrillTier> braquet = DrillTier.getTierBraquet(power);
+        final DrillTier current = getSelectedDrillTier(stack);
+        tooltip.add(new TextComponentTranslation("text.industrialforegoing.display.current_area")
+                .getUnformattedText() + " " + getFormattedArea(current, current.getRadius()));
+        tooltip.add(new TextComponentTranslation("text.industrialforegoing.display.tier")
+                .getUnformattedText() + " " + braquet.getLeft().getColor()
+                + braquet.getLeft().getLocalizedName());
+        tooltip.add(new TextComponentTranslation("text.industrialforegoing.display.power")
+                .getUnformattedText() + " " + new DecimalFormat().format(power) + "/"
+                + new DecimalFormat().format(braquet.getRight().getPowerNeeded()) + "RF "
+                + new TextComponentTranslation("text.industrialforegoing.display.next_tier")
+                        .getUnformattedText());
+        final int fuelAmount = getFuelFromStack(stack);
+        tooltip.add(new TextComponentTranslation("text.industrialforegoing.display.fluid")
+                .getUnformattedText() + " " + new DecimalFormat().format(fuelAmount) + "/"
+                + new DecimalFormat().format(1000000) + " mb "
+                + new TextComponentTranslation(FluidsRegistry.BIOFUEL.getUnlocalizedName())
+                        .getUnformattedComponentText());
+        tooltip.add(new TextComponentTranslation("text.industrialforegoing.display.max_area")
+                .getUnformattedText() + " "
+                + getFormattedArea(braquet.getLeft(), braquet.getLeft().getRadius()));
         if (isSpecial(stack))
-            tooltip.add(new TextComponentTranslation("text.industrialforegoing.display.special").getFormattedText());
+            tooltip.add(new TextComponentTranslation("text.industrialforegoing.display.special")
+                    .getFormattedText());
     }
 
-    public long getPowerFromStack(ItemStack stack) {
+    public long getPowerFromStack(final ItemStack stack) {
         long power = 0;
         if (stack.hasTagCompound() && stack.getTagCompound().hasKey("Energy")) {
             power = stack.getTagCompound().getLong("Energy");
@@ -233,28 +246,31 @@ public class ItemInfinityDrill extends IFCustomItem {
         return power;
     }
 
-    public int getFuelFromStack(ItemStack stack) {
+    public int getFuelFromStack(final ItemStack stack) {
         int fuelAmount = 0;
-        if (stack.hasTagCompound() && stack.getTagCompound().hasKey("Fluid") && stack.getTagCompound().getCompoundTag("Fluid").hasKey("Amount")) {
+        if (stack.hasTagCompound() && stack.getTagCompound().hasKey("Fluid")
+                && stack.getTagCompound().getCompoundTag("Fluid").hasKey("Amount")) {
             fuelAmount = stack.getTagCompound().getCompoundTag("Fluid").getInteger("Amount");
         }
         return fuelAmount;
     }
 
-    public boolean isSpecial(ItemStack stack) {
-        return stack.hasTagCompound() && stack.getTagCompound().hasKey("Special") && stack.getTagCompound().getBoolean("Special");
+    public boolean isSpecial(final ItemStack stack) {
+        return stack.hasTagCompound() && stack.getTagCompound().hasKey("Special")
+                && stack.getTagCompound().getBoolean("Special");
     }
 
-    public ItemStack createStack(long power, int fuel, boolean special) {
-        ItemStack stack = new ItemStack(this);
+    public ItemStack createStack(final long power, final int fuel, final boolean special) {
+        final ItemStack stack = new ItemStack(this);
         addNbt(stack, power, fuel, special);
         return stack;
     }
 
-    public void addNbt(ItemStack stack, long power, int fuel, boolean special) {
-        NBTTagCompound tagCompound = new NBTTagCompound();
+    public void addNbt(final ItemStack stack, final long power, final int fuel,
+            final boolean special) {
+        final NBTTagCompound tagCompound = new NBTTagCompound();
         tagCompound.setLong("Energy", power);
-        NBTTagCompound fluid = new NBTTagCompound();
+        final NBTTagCompound fluid = new NBTTagCompound();
         fluid.setString("FluidName", "biofuel");
         fluid.setInteger("Amount", fuel);
         tagCompound.setTag("Fluid", fluid);
@@ -263,79 +279,114 @@ public class ItemInfinityDrill extends IFCustomItem {
         stack.setTagCompound(tagCompound);
     }
 
-    private String getFormattedArea(DrillTier tier, int radius) {
-        int diameter = radius * 2 + 1;
+    private String getFormattedArea(final DrillTier tier, final int radius) {
+        final int diameter = radius * 2 + 1;
         return diameter + "x" + diameter + "x" + (tier == DrillTier.ARTIFACT ? diameter : 1);
     }
 
-    private boolean enoughFuel(ItemStack stack) {
-        return getFuelFromStack(stack) >= FUEL_CONSUMPTION || getPowerFromStack(stack) >= POWER_CONSUMPTION;
+    private boolean enoughFuel(final ItemStack stack) {
+        return getFuelFromStack(stack) >= FUEL_CONSUMPTION
+                || getPowerFromStack(stack) >= POWER_CONSUMPTION;
     }
 
-    private void consumeFuel(ItemStack stack) {
+    private void consumeFuel(final ItemStack stack) {
         if (getFuelFromStack(stack) >= FUEL_CONSUMPTION) {
-            if (stack.hasTagCompound() && stack.getTagCompound().hasKey("Fluid") && stack.getTagCompound().getCompoundTag("Fluid").hasKey("Amount")) {
-                stack.getTagCompound().getCompoundTag("Fluid").setInteger("Amount", getFuelFromStack(stack) - FUEL_CONSUMPTION);
+            if (stack.hasTagCompound() && stack.getTagCompound().hasKey("Fluid")
+                    && stack.getTagCompound().getCompoundTag("Fluid").hasKey("Amount")) {
+                stack.getTagCompound().getCompoundTag("Fluid").setInteger("Amount",
+                        getFuelFromStack(stack) - FUEL_CONSUMPTION);
             }
         } else {
-            stack.getTagCompound().setLong("Energy", stack.getTagCompound().getLong("Energy") - POWER_CONSUMPTION);
+            stack.getTagCompound().setLong("Energy",
+                    stack.getTagCompound().getLong("Energy") - POWER_CONSUMPTION);
         }
     }
 
     @Override
-    public boolean onBlockDestroyed(ItemStack stack, World worldIn, IBlockState state, BlockPos pos, EntityLivingBase entityLiving) {
+    public boolean onBlockDestroyed(final ItemStack stack, final World worldIn,
+            final IBlockState state, final BlockPos pos, final EntityLivingBase entityLiving) {
         if (entityLiving instanceof EntityPlayer) {
-            RayTraceResult rayTraceResult = RayTraceUtils.rayTraceSimple(worldIn, entityLiving, 16, 0);
-            EnumFacing facing = rayTraceResult.sideHit;
-            DrillTier currentTier = getSelectedDrillTier(stack);
-            Pair<BlockPos, BlockPos> area = getArea(pos, facing, currentTier, true);
+            final RayTraceResult rayTraceResult =
+                    RayTraceUtils.rayTraceSimple(worldIn, entityLiving, 16, 0);
+            final EnumFacing facing = rayTraceResult.sideHit;
+            final DrillTier currentTier = getSelectedDrillTier(stack);
+            final Pair<BlockPos, BlockPos> area = getArea(pos, facing, currentTier, true);
             BlockPos.getAllInBox(area.getLeft(), area.getRight()).forEach(blockPos -> {
-                if (enoughFuel(stack) && worldIn.getTileEntity(blockPos) == null && entityLiving instanceof EntityPlayerMP && !worldIn.isAirBlock(blockPos)) {
-                    IBlockState tempState = worldIn.getBlockState(blockPos);
-                    Block block = tempState.getBlock();
-                    if (block.getBlockHardness(tempState, worldIn, blockPos) < 0) return;
-                    int xp = ForgeHooks.onBlockBreakEvent(worldIn, ((EntityPlayerMP) entityLiving).interactionManager.getGameType(), (EntityPlayerMP) entityLiving, blockPos);
-                    if (xp >= 0 && block.removedByPlayer(tempState, worldIn, blockPos, (EntityPlayer) entityLiving, true)) {
+                if (enoughFuel(stack) && worldIn.getTileEntity(blockPos) == null
+                        && entityLiving instanceof EntityPlayerMP
+                        && !worldIn.isAirBlock(blockPos)) {
+                    final IBlockState tempState = worldIn.getBlockState(blockPos);
+                    final Block block = tempState.getBlock();
+                    if (tempState.getBlockHardness(worldIn, blockPos) < 0)
+                        return;
+                    final int xp = ForgeHooks.onBlockBreakEvent(worldIn,
+                            ((EntityPlayerMP) entityLiving).interactionManager.getGameType(),
+                            (EntityPlayerMP) entityLiving, blockPos);
+                    if (xp >= 0 && block.removedByPlayer(tempState, worldIn, blockPos,
+                            (EntityPlayer) entityLiving, true)) {
                         block.onPlayerDestroy(worldIn, blockPos, tempState);
-                        block.harvestBlock(worldIn, (EntityPlayer) entityLiving, blockPos, tempState, null, stack);
+                        block.harvestBlock(worldIn, (EntityPlayer) entityLiving, blockPos,
+                                tempState, null, stack);
                         block.dropXpOnBlockBreak(worldIn, blockPos, xp);
                         consumeFuel(stack);
                     }
                 }
             });
-            worldIn.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(area.getLeft(), area.getRight()).grow(1)).forEach(entityItem -> {
-                entityItem.setPositionAndUpdate(entityLiving.posX, entityLiving.posY, entityLiving.posZ);
-                entityItem.setPickupDelay(0);
-            });
-            worldIn.getEntitiesWithinAABB(EntityXPOrb.class, new AxisAlignedBB(area.getLeft(), area.getRight()).grow(1)).forEach(entityXPOrb -> entityXPOrb.setPositionAndUpdate(entityLiving.posX, entityLiving.posY, entityLiving.posZ));
+            worldIn.getEntitiesWithinAABB(EntityItem.class,
+                    new AxisAlignedBB(area.getLeft(), area.getRight()).grow(1))
+                    .forEach(entityItem -> {
+                        entityItem.setPositionAndUpdate(entityLiving.posX, entityLiving.posY,
+                                entityLiving.posZ);
+                        entityItem.setPickupDelay(0);
+                    });
+            worldIn.getEntitiesWithinAABB(EntityXPOrb.class,
+                    new AxisAlignedBB(area.getLeft(), area.getRight()).grow(1))
+                    .forEach(entityXPOrb -> entityXPOrb.setPositionAndUpdate(entityLiving.posX,
+                            entityLiving.posY, entityLiving.posZ));
         }
         return super.onBlockDestroyed(stack, worldIn, state, pos, entityLiving);
     }
 
-    public DrillTier getSelectedDrillTier(ItemStack stack) {
-        return stack.hasTagCompound() && stack.getTagCompound().hasKey("Selected") ? DrillTier.valueOf(stack.getTagCompound().getString("Selected")) : DrillTier.getTierBraquet(getPowerFromStack(stack)).getLeft();
+    public DrillTier getSelectedDrillTier(final ItemStack stack) {
+        return stack.hasTagCompound() && stack.getTagCompound().hasKey("Selected")
+                ? DrillTier.valueOf(stack.getTagCompound().getString("Selected"))
+                : DrillTier.getTierBraquet(getPowerFromStack(stack)).getLeft();
     }
 
-    public void setSelectedDrillTier(ItemStack stack, DrillTier tier) {
+    public void setSelectedDrillTier(final ItemStack stack, final DrillTier tier) {
         stack.getTagCompound().setString("Selected", tier.name());
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer player, EnumHand handIn) {
+    public ActionResult<ItemStack> onItemRightClick(final World worldIn, final EntityPlayer player,
+            final EnumHand handIn) {
         if (player.isSneaking()) {
             player.playSound(SoundEvents.BLOCK_LEVER_CLICK, 0.5f, 0.5f);
-            ItemStack stack = player.getHeldItem(handIn);
-            DrillTier next = getSelectedDrillTier(stack).getNext(DrillTier.getTierBraquet(getPowerFromStack(stack)).getLeft());
-            player.sendStatusMessage(new TextComponentString(new TextComponentTranslation("text.industrialforegoing.display.current_area").getUnformattedText() + " " + getFormattedArea(next, next.getRadius())), true);
+            final ItemStack stack = player.getHeldItem(handIn);
+            final DrillTier next = getSelectedDrillTier(stack)
+                    .getNext(DrillTier.getTierBraquet(getPowerFromStack(stack)).getLeft());
+            player.sendStatusMessage(new TextComponentString(
+                    new TextComponentTranslation("text.industrialforegoing.display.current_area")
+                            .getUnformattedText() + " " + getFormattedArea(next, next.getRadius())),
+                    true);
             setSelectedDrillTier(stack, next);
         }
         return super.onItemRightClick(worldIn, player, handIn);
     }
 
-    public Pair<BlockPos, BlockPos> getArea(BlockPos pos, EnumFacing facing, DrillTier currentTier, boolean withDepth) {
-        int radius = currentTier.radius;
-        BlockPos bottomLeft = pos.offset(facing.getAxis() == EnumFacing.Axis.Y ? EnumFacing.SOUTH : EnumFacing.DOWN, radius).offset(facing.getAxis() == EnumFacing.Axis.Y ? EnumFacing.WEST : facing.rotateYCCW(), radius);
-        BlockPos topRight = pos.offset(facing.getAxis() == EnumFacing.Axis.Y ? EnumFacing.NORTH : EnumFacing.UP, radius).offset(facing.getAxis() == EnumFacing.Axis.Y ? EnumFacing.EAST : facing.rotateY(), radius);
+    public Pair<BlockPos, BlockPos> getArea(final BlockPos pos, final EnumFacing facing,
+            final DrillTier currentTier, final boolean withDepth) {
+        final int radius = currentTier.radius;
+        BlockPos bottomLeft = pos
+                .offset(facing.getAxis() == EnumFacing.Axis.Y ? EnumFacing.SOUTH : EnumFacing.DOWN,
+                        radius)
+                .offset(facing.getAxis() == EnumFacing.Axis.Y ? EnumFacing.WEST
+                        : facing.rotateYCCW(), radius);
+        BlockPos topRight = pos
+                .offset(facing.getAxis() == EnumFacing.Axis.Y ? EnumFacing.NORTH : EnumFacing.UP,
+                        radius)
+                .offset(facing.getAxis() == EnumFacing.Axis.Y ? EnumFacing.EAST : facing.rotateY(),
+                        radius);
         if (facing.getAxis() != EnumFacing.Axis.Y && radius > 0) {
             bottomLeft = bottomLeft.offset(EnumFacing.UP, radius - 1);
             topRight = topRight.offset(EnumFacing.UP, radius - 1);
@@ -347,33 +398,44 @@ public class ItemInfinityDrill extends IFCustomItem {
     }
 
     @Override
-    public Multimap<String, AttributeModifier> getAttributeModifiers(EntityEquipmentSlot slot, ItemStack stack) {
-        Multimap<String, AttributeModifier> multimap = super.getAttributeModifiers(slot, stack);
+    public Multimap<String, AttributeModifier> getAttributeModifiers(final EntityEquipmentSlot slot,
+            final ItemStack stack) {
+        final Multimap<String, AttributeModifier> multimap =
+                super.getAttributeModifiers(slot, stack);
         if (slot == EntityEquipmentSlot.MAINHAND) {
-            DrillTier drillTier = DrillTier.getTierBraquet(getPowerFromStack(stack)).getLeft();
-            multimap.put(SharedMonsterAttributes.ATTACK_DAMAGE.getName(), new AttributeModifier(ATTACK_DAMAGE_MODIFIER, "Tool modifier", 2 + drillTier.getRadius(), 0));
-            multimap.put(SharedMonsterAttributes.ATTACK_SPEED.getName(), new AttributeModifier(ATTACK_SPEED_MODIFIER, "Tool modifier", -2.5D, 0));
+            final DrillTier drillTier =
+                    DrillTier.getTierBraquet(getPowerFromStack(stack)).getLeft();
+            multimap.put(SharedMonsterAttributes.ATTACK_DAMAGE.getName(), new AttributeModifier(
+                    ATTACK_DAMAGE_MODIFIER, "Tool modifier", 2 + drillTier.getRadius(), 0));
+            multimap.put(SharedMonsterAttributes.ATTACK_SPEED.getName(),
+                    new AttributeModifier(ATTACK_SPEED_MODIFIER, "Tool modifier", -2.5D, 0));
         }
         return multimap;
     }
 
-    public void configuration(Configuration config) {
+    public void configuration(final Configuration config) {
         int i = 0;
-        for (DrillTier value : DrillTier.values()) {
-            value.setPowerNeeded(Long.parseLong(config.getString(i + "_" + value.name, Configuration.CATEGORY_GENERAL + Configuration.CATEGORY_SPLITTER + "infinity_drill" + Configuration.CATEGORY_SPLITTER + "power_values", value.powerNeeded + "", "")));
-            value.setRadius(config.getInt(i + "_" + value.name, Configuration.CATEGORY_GENERAL + Configuration.CATEGORY_SPLITTER + "infinity_drill" + Configuration.CATEGORY_SPLITTER + "radius", value.radius, 0, Integer.MAX_VALUE, ""));
+        for (final DrillTier value : DrillTier.values()) {
+            value.setPowerNeeded(Long.parseLong(config.getString(i + "_" + value.name,
+                    Configuration.CATEGORY_GENERAL + Configuration.CATEGORY_SPLITTER
+                            + "infinity_drill" + Configuration.CATEGORY_SPLITTER + "power_values",
+                    value.powerNeeded + "", "")));
+            value.setRadius(config.getInt(i + "_" + value.name,
+                    Configuration.CATEGORY_GENERAL + Configuration.CATEGORY_SPLITTER
+                            + "infinity_drill" + Configuration.CATEGORY_SPLITTER + "radius",
+                    value.radius, 0, Integer.MAX_VALUE, ""));
             ++i;
         }
     }
 
     public enum DrillTier {
-        POOR("poor", 0, 0, TextFormatting.GRAY, 0x7c7c7a),//1x1
-        COMMON("common", 4_000_000, 1, TextFormatting.WHITE, 0xFFFFFF), //3x3
-        UNCOMMON("uncommon", 16_000_000, 2, TextFormatting.GREEN, 0x1ce819), //5x5
-        RARE("rare", 80_000_000, 3, TextFormatting.BLUE, 0x0087ff), //7x7
-        EPIC("epic", 480_000_000, 4, TextFormatting.DARK_PURPLE, 0xe100ff), //9x9
-        LEGENDARY("legendary", 3_360_000_000L, 5, TextFormatting.GOLD, 0xffaa00), //11x11
-        ARTIFACT("artifact", Long.MAX_VALUE, 6, TextFormatting.YELLOW, 0xfff887); //13x13
+        POOR("poor", 0, 0, TextFormatting.GRAY, 0x7c7c7a), // 1x1
+        COMMON("common", 4_000_000, 1, TextFormatting.WHITE, 0xFFFFFF), // 3x3
+        UNCOMMON("uncommon", 16_000_000, 2, TextFormatting.GREEN, 0x1ce819), // 5x5
+        RARE("rare", 80_000_000, 3, TextFormatting.BLUE, 0x0087ff), // 7x7
+        EPIC("epic", 480_000_000, 4, TextFormatting.DARK_PURPLE, 0xe100ff), // 9x9
+        LEGENDARY("legendary", 3_360_000_000L, 5, TextFormatting.GOLD, 0xffaa00), // 11x11
+        ARTIFACT("artifact", Long.MAX_VALUE, 6, TextFormatting.YELLOW, 0xfff887); // 13x13
 
         private final String name;
         private final TextFormatting color;
@@ -381,7 +443,8 @@ public class ItemInfinityDrill extends IFCustomItem {
         private long powerNeeded;
         private int radius;
 
-        DrillTier(String name, long powerNeeded, int radius, TextFormatting color, int textureColor) {
+        DrillTier(final String name, final long powerNeeded, final int radius,
+                final TextFormatting color, final int textureColor) {
             this.name = name;
             this.powerNeeded = powerNeeded;
             this.radius = radius;
@@ -389,9 +452,9 @@ public class ItemInfinityDrill extends IFCustomItem {
             this.textureColor = textureColor;
         }
 
-        public static Pair<DrillTier, DrillTier> getTierBraquet(long power) {
+        public static Pair<DrillTier, DrillTier> getTierBraquet(final long power) {
             DrillTier lastTier = POOR;
-            for (DrillTier drillTier : DrillTier.values()) {
+            for (final DrillTier drillTier : DrillTier.values()) {
                 if (power >= lastTier.getPowerNeeded() && power < drillTier.getPowerNeeded())
                     return Pair.of(lastTier, drillTier);
                 lastTier = drillTier;
@@ -400,7 +463,8 @@ public class ItemInfinityDrill extends IFCustomItem {
         }
 
         public String getLocalizedName() {
-            return new TextComponentTranslation("text.industrialforegoing.tooltip.infinitydrill." + name).getUnformattedText();
+            return new TextComponentTranslation(
+                    "text.industrialforegoing.tooltip.infinitydrill." + name).getUnformattedText();
         }
 
         public String getName() {
@@ -411,7 +475,7 @@ public class ItemInfinityDrill extends IFCustomItem {
             return powerNeeded;
         }
 
-        public void setPowerNeeded(long powerNeeded) {
+        public void setPowerNeeded(final long powerNeeded) {
             this.powerNeeded = powerNeeded;
         }
 
@@ -419,7 +483,7 @@ public class ItemInfinityDrill extends IFCustomItem {
             return radius;
         }
 
-        public void setRadius(int radius) {
+        public void setRadius(final int radius) {
             this.radius = radius;
         }
 
@@ -431,12 +495,15 @@ public class ItemInfinityDrill extends IFCustomItem {
             return textureColor;
         }
 
-        public DrillTier getNext(DrillTier maxTier) {
+        public DrillTier getNext(final DrillTier maxTier) {
             DrillTier lastTier = POOR;
-            for (DrillTier drillTier : DrillTier.values()) {
-                if (drillTier == POOR) continue;
-                if (lastTier == maxTier) return POOR;
-                if (this == lastTier) return drillTier;
+            for (final DrillTier drillTier : DrillTier.values()) {
+                if (drillTier == POOR)
+                    continue;
+                if (lastTier == maxTier)
+                    return POOR;
+                if (this == lastTier)
+                    return drillTier;
                 lastTier = drillTier;
             }
             return DrillTier.POOR;
@@ -448,15 +515,16 @@ public class ItemInfinityDrill extends IFCustomItem {
         private final FluidHandlerItemStack tank;
         private final InfinityDrillEnergyStorage energyStorage;
 
-        private InfinityDrillCapabilityProvider(ItemStack stack) {
+        private InfinityDrillCapabilityProvider(final ItemStack stack) {
             tank = new FluidHandlerItemStack(stack, 1_000_000) {
                 @Override
-                public boolean canFillFluidType(FluidStack fluid) {
-                    return fluid != null && fluid.getFluid() != null && fluid.getFluid().equals(FluidsRegistry.BIOFUEL);
+                public boolean canFillFluidType(final FluidStack fluid) {
+                    return fluid != null && fluid.getFluid() != null
+                            && fluid.getFluid().equals(FluidsRegistry.BIOFUEL);
                 }
 
                 @Override
-                public boolean canDrainFluidType(FluidStack fluid) {
+                public boolean canDrainFluidType(final FluidStack fluid) {
                     return false;
                 }
             };
@@ -464,32 +532,39 @@ public class ItemInfinityDrill extends IFCustomItem {
                 @Override
                 public long getLongEnergyStored() {
                     if (stack.hasTagCompound()) {
-                        return Math.min(stack.getTagCompound().getLong("Energy"), DrillTier.ARTIFACT.getPowerNeeded());
+                        return Math.min(stack.getTagCompound().getLong("Energy"),
+                                DrillTier.ARTIFACT.getPowerNeeded());
                     } else {
                         return 0;
                     }
                 }
 
                 @Override
-                public void setEnergyStored(long energy) {
+                public void setEnergyStored(final long energy) {
                     if (!stack.hasTagCompound()) {
                         stack.setTagCompound(new NBTTagCompound());
                     }
-                    stack.getTagCompound().setLong("Energy", Math.min(energy, DrillTier.ARTIFACT.getPowerNeeded()));
+                    stack.getTagCompound().setLong("Energy",
+                            Math.min(energy, DrillTier.ARTIFACT.getPowerNeeded()));
                 }
             };
         }
 
         @Override
-        public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
-            return capability == CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY || capability == CapabilityEnergy.ENERGY;
+        public boolean hasCapability(@Nonnull final Capability<?> capability,
+                @Nullable final EnumFacing facing) {
+            return capability == CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY
+                    || capability == CapabilityEnergy.ENERGY;
         }
 
         @Nullable
         @Override
-        public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
-            if (capability == CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY) return (T) tank;
-            if (capability == CapabilityEnergy.ENERGY) return (T) energyStorage;
+        public <T> T getCapability(@Nonnull final Capability<T> capability,
+                @Nullable final EnumFacing facing) {
+            if (capability == CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY)
+                return (T) tank;
+            if (capability == CapabilityEnergy.ENERGY)
+                return (T) energyStorage;
             return null;
         }
     }
@@ -505,16 +580,17 @@ public class ItemInfinityDrill extends IFCustomItem {
         }
 
         @Override
-        public int receiveEnergy(int maxReceive, boolean simulate) {
-            long stored = getLongEnergyStored();
-            int energyReceived = (int) Math.min(capacity - stored, Math.min(Long.MAX_VALUE, maxReceive));
+        public int receiveEnergy(final int maxReceive, final boolean simulate) {
+            final long stored = getLongEnergyStored();
+            final int energyReceived =
+                    (int) Math.min(capacity - stored, Math.min(Long.MAX_VALUE, maxReceive));
             if (!simulate)
                 setEnergyStored(stored + energyReceived);
             return energyReceived;
         }
 
         @Override
-        public int extractEnergy(int maxExtract, boolean simulate) {
+        public int extractEnergy(final int maxExtract, final boolean simulate) {
             return 0;
         }
 
@@ -523,7 +599,7 @@ public class ItemInfinityDrill extends IFCustomItem {
             return (int) energy;
         }
 
-        public void setEnergyStored(long power) {
+        public void setEnergyStored(final long power) {
             this.energy = power;
         }
 

@@ -3,28 +3,31 @@
  *
  * Copyright 2019, Buuz135
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in the
- * Software without restriction, including without limitation the rights to use, copy,
- * modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
- * and to permit persons to whom the Software is furnished to do so, subject to the
- * following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+ * associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all copies
- * or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
- * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
- * PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
- * FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
- * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+ * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 package com.buuz135.industrial.tile.block;
 
+import java.util.List;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.buuz135.industrial.book.BookCategory;
 import com.buuz135.industrial.proxy.ItemRegistry;
 import com.buuz135.industrial.tile.misc.BlackHoleUnitTile;
 import com.buuz135.industrial.utils.RecipeUtils;
+import org.jetbrains.annotations.NotNull;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -48,11 +51,6 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.ndrei.teslacorelib.items.MachineCaseItem;
-import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.List;
 
 public class BlackHoleUnitBlock extends CustomOrientedBlock<BlackHoleUnitTile> {
 
@@ -61,23 +59,28 @@ public class BlackHoleUnitBlock extends CustomOrientedBlock<BlackHoleUnitTile> {
     }
 
     @Override
-    public void breakBlock(World world, BlockPos pos, IBlockState state) {
+    public void breakBlock(final World world, final BlockPos pos, final IBlockState state) {
         if (world.getTileEntity(pos) instanceof BlackHoleUnitTile) {
-            BlackHoleUnitTile tile = (BlackHoleUnitTile) world.getTileEntity(pos);
-            ItemStack stack = new ItemStack(Item.getItemFromBlock(this), 1);
+            final BlackHoleUnitTile tile = (BlackHoleUnitTile) world.getTileEntity(pos);
+            final ItemStack stack = new ItemStack(Item.getItemFromBlock(this), 1);
             if (tile.getAmount() > 0) {
-                if (!stack.hasTagCompound()) stack.setTagCompound(new NBTTagCompound());
+                if (!stack.hasTagCompound())
+                    stack.setTagCompound(new NBTTagCompound());
                 stack.getTagCompound().setInteger(BlackHoleUnitTile.NBT_AMOUNT, tile.getAmount());
-                stack.getTagCompound().setString(BlackHoleUnitTile.NBT_ITEMSTACK, tile.getItemStack().getItem().getRegistryName().toString());
-                stack.getTagCompound().setInteger(BlackHoleUnitTile.NBT_META, tile.getItemStack().getMetadata());
+                stack.getTagCompound().setString(BlackHoleUnitTile.NBT_ITEMSTACK,
+                        tile.getItemStack().getItem().getRegistryName().toString());
+                stack.getTagCompound().setInteger(BlackHoleUnitTile.NBT_META,
+                        tile.getItemStack().getMetadata());
                 if (tile.getItemStack().hasTagCompound())
-                    stack.getTagCompound().setTag(BlackHoleUnitTile.NBT_ITEM_NBT, tile.getItemStack().getTagCompound());
+                    stack.getTagCompound().setTag(BlackHoleUnitTile.NBT_ITEM_NBT,
+                            tile.getItemStack().getTagCompound());
             }
-            float f = 0.7F;
-            float d0 = world.rand.nextFloat() * f + (1.0F - f) * 0.5F;
-            float d1 = world.rand.nextFloat() * f + (1.0F - f) * 0.5F;
-            float d2 = world.rand.nextFloat() * f + (1.0F - f) * 0.5F;
-            EntityItem entityitem = new EntityItem(world, pos.getX() + d0, pos.getY() + d1, pos.getZ() + d2, stack);
+            final float f = 0.7F;
+            final float d0 = world.rand.nextFloat() * f + (1.0F - f) * 0.5F;
+            final float d1 = world.rand.nextFloat() * f + (1.0F - f) * 0.5F;
+            final float d2 = world.rand.nextFloat() * f + (1.0F - f) * 0.5F;
+            final EntityItem entityitem =
+                    new EntityItem(world, pos.getX() + d0, pos.getY() + d1, pos.getZ() + d2, stack);
             entityitem.setDefaultPickupDelay();
             if (stack.hasTagCompound()) {
                 entityitem.getItem().setTagCompound(stack.getTagCompound().copy());
@@ -88,19 +91,28 @@ public class BlackHoleUnitBlock extends CustomOrientedBlock<BlackHoleUnitTile> {
     }
 
     @Override
-    public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
+    public void getDrops(final NonNullList<ItemStack> drops, final IBlockAccess world,
+            final BlockPos pos, final IBlockState state, final int fortune) {
 
     }
 
     @Override
-    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
+    public void onBlockPlacedBy(final World world, final BlockPos pos, final IBlockState state,
+            final EntityLivingBase placer, final ItemStack stack) {
         super.onBlockPlacedBy(world, pos, state, placer, stack);
-        if (stack.hasTagCompound() && world.getTileEntity(pos) != null && world.getTileEntity(pos) instanceof BlackHoleUnitTile && Item.getByNameOrId(stack.getTagCompound().getString(BlackHoleUnitTile.NBT_ITEMSTACK)) != null) {
-            BlackHoleUnitTile tile = (BlackHoleUnitTile) world.getTileEntity(pos);
-            if (stack.getTagCompound().hasKey(BlackHoleUnitTile.NBT_ITEMSTACK) && stack.getTagCompound().hasKey(BlackHoleUnitTile.NBT_META)) {
-                ItemStack item = new ItemStack(Item.getByNameOrId(stack.getTagCompound().getString(BlackHoleUnitTile.NBT_ITEMSTACK)), 1, stack.getTagCompound().getInteger(BlackHoleUnitTile.NBT_META));
+        if (stack.hasTagCompound() && world.getTileEntity(pos) != null
+                && world.getTileEntity(pos) instanceof BlackHoleUnitTile && Item.getByNameOrId(stack
+                        .getTagCompound().getString(BlackHoleUnitTile.NBT_ITEMSTACK)) != null) {
+            final BlackHoleUnitTile tile = (BlackHoleUnitTile) world.getTileEntity(pos);
+            if (stack.getTagCompound().hasKey(BlackHoleUnitTile.NBT_ITEMSTACK)
+                    && stack.getTagCompound().hasKey(BlackHoleUnitTile.NBT_META)) {
+                final ItemStack item = new ItemStack(
+                        Item.getByNameOrId(
+                                stack.getTagCompound().getString(BlackHoleUnitTile.NBT_ITEMSTACK)),
+                        1, stack.getTagCompound().getInteger(BlackHoleUnitTile.NBT_META));
                 if (stack.getTagCompound().hasKey(BlackHoleUnitTile.NBT_ITEM_NBT))
-                    item.setTagCompound(stack.getTagCompound().getCompoundTag(BlackHoleUnitTile.NBT_ITEM_NBT));
+                    item.setTagCompound(
+                            stack.getTagCompound().getCompoundTag(BlackHoleUnitTile.NBT_ITEM_NBT));
                 tile.setStack(item);
             }
             if (stack.getTagCompound().hasKey(BlackHoleUnitTile.NBT_AMOUNT))
@@ -109,42 +121,55 @@ public class BlackHoleUnitBlock extends CustomOrientedBlock<BlackHoleUnitTile> {
     }
 
     @Override
-    public List<String> getTooltip(ItemStack stack) {
-        List<String> tooltip = super.getTooltip(stack);
-        if (stack.hasTagCompound() && Item.getByNameOrId(stack.getTagCompound().getString(BlackHoleUnitTile.NBT_ITEMSTACK)) != null) {
-            if (stack.getTagCompound().hasKey(BlackHoleUnitTile.NBT_ITEMSTACK) && stack.getTagCompound().hasKey(BlackHoleUnitTile.NBT_META)) {
-                tooltip.add(new TextComponentTranslation("text.industrialforegoing.display.item").getUnformattedText() + " " + new TextComponentTranslation(new ItemStack(Item.getByNameOrId(stack.getTagCompound().getString(BlackHoleUnitTile.NBT_ITEMSTACK)), 1, stack.getTagCompound().getInteger(BlackHoleUnitTile.NBT_META)).getTranslationKey() + ".name").getUnformattedText());
+    public List<String> getTooltip(final ItemStack stack) {
+        final List<String> tooltip = super.getTooltip(stack);
+        if (stack.hasTagCompound() && Item.getByNameOrId(
+                stack.getTagCompound().getString(BlackHoleUnitTile.NBT_ITEMSTACK)) != null) {
+            if (stack.getTagCompound().hasKey(BlackHoleUnitTile.NBT_ITEMSTACK)
+                    && stack.getTagCompound().hasKey(BlackHoleUnitTile.NBT_META)) {
+                tooltip.add(new TextComponentTranslation("text.industrialforegoing.display.item")
+                        .getUnformattedText()
+                        + " "
+                        + new TextComponentTranslation(new ItemStack(
+                                Item.getByNameOrId(stack.getTagCompound()
+                                        .getString(BlackHoleUnitTile.NBT_ITEMSTACK)),
+                                1, stack.getTagCompound().getInteger(BlackHoleUnitTile.NBT_META))
+                                        .getTranslationKey()
+                                + ".name").getUnformattedText());
             }
             if (stack.getTagCompound().hasKey(BlackHoleUnitTile.NBT_AMOUNT))
-                tooltip.add(new TextComponentTranslation("text.industrialforegoing.display.amount").getUnformattedText() + " " + stack.getTagCompound().getInteger(BlackHoleUnitTile.NBT_AMOUNT));
+                tooltip.add(new TextComponentTranslation("text.industrialforegoing.display.amount")
+                        .getUnformattedText() + " "
+                        + stack.getTagCompound().getInteger(BlackHoleUnitTile.NBT_AMOUNT));
         }
         return tooltip;
     }
 
     public void createRecipe() {
-        RecipeUtils.addShapedRecipe(new ItemStack(this), "ppp", "eae", "cmc",
-                'p', ItemRegistry.plastic,
-                'e', Items.ENDER_EYE,
-                'a', Items.ENDER_PEARL,
-                'c', "chestWood",
-                'm', MachineCaseItem.INSTANCE);
+        RecipeUtils.addShapedRecipe(new ItemStack(this), "ppp", "eae", "cmc", 'p',
+                ItemRegistry.plastic, 'e', Items.ENDER_EYE, 'a', Items.ENDER_PEARL, 'c',
+                "chestWood", 'm', MachineCaseItem.INSTANCE);
     }
 
-    public ItemStack getItemStack(ItemStack blackHole) {
-        NBTTagCompound compound = blackHole.getTagCompound();
+    public ItemStack getItemStack(final ItemStack blackHole) {
+        final NBTTagCompound compound = blackHole.getTagCompound();
         ItemStack stack = ItemStack.EMPTY;
-        if (compound == null || !compound.hasKey(BlackHoleUnitTile.NBT_ITEMSTACK)) return stack;
-        Item item = Item.getByNameOrId(compound.getString(BlackHoleUnitTile.NBT_ITEMSTACK));
+        if (compound == null || !compound.hasKey(BlackHoleUnitTile.NBT_ITEMSTACK))
+            return stack;
+        final Item item = Item.getByNameOrId(compound.getString(BlackHoleUnitTile.NBT_ITEMSTACK));
         if (item != null) {
-            stack = new ItemStack(item, 1, compound.hasKey(BlackHoleUnitTile.NBT_META) ? compound.getInteger(BlackHoleUnitTile.NBT_META) : 0);
+            stack = new ItemStack(item, 1,
+                    compound.hasKey(BlackHoleUnitTile.NBT_META)
+                            ? compound.getInteger(BlackHoleUnitTile.NBT_META)
+                            : 0);
             if (compound.hasKey(BlackHoleUnitTile.NBT_ITEM_NBT))
                 stack.setTagCompound(compound.getCompoundTag(BlackHoleUnitTile.NBT_ITEM_NBT));
         }
         return stack;
     }
 
-    public int getAmount(ItemStack blackHole) {
-        NBTTagCompound compound = blackHole.getTagCompound();
+    public int getAmount(final ItemStack blackHole) {
+        final NBTTagCompound compound = blackHole.getTagCompound();
         int amount = 0;
         if (compound != null && compound.hasKey(BlackHoleUnitTile.NBT_AMOUNT)) {
             amount = compound.getInteger(BlackHoleUnitTile.NBT_AMOUNT);
@@ -152,16 +177,18 @@ public class BlackHoleUnitBlock extends CustomOrientedBlock<BlackHoleUnitTile> {
         return amount;
     }
 
-    public void setAmount(ItemStack blackHole, int amount) {
-        NBTTagCompound compound = blackHole.getTagCompound();
+    public void setAmount(final ItemStack blackHole, final int amount) {
+        final NBTTagCompound compound = blackHole.getTagCompound();
         if (compound != null) {
             compound.setInteger(BlackHoleUnitTile.NBT_AMOUNT, amount);
         }
     }
 
-    public void setItemStack(ItemStack hole, ItemStack item) {
-        if (!hole.hasTagCompound()) hole.setTagCompound(new NBTTagCompound());
-        hole.getTagCompound().setString(BlackHoleUnitTile.NBT_ITEMSTACK, item.getItem().getRegistryName().toString());
+    public void setItemStack(final ItemStack hole, final ItemStack item) {
+        if (!hole.hasTagCompound())
+            hole.setTagCompound(new NBTTagCompound());
+        hole.getTagCompound().setString(BlackHoleUnitTile.NBT_ITEMSTACK,
+                item.getItem().getRegistryName().toString());
         hole.getTagCompound().setInteger(BlackHoleUnitTile.NBT_META, item.getMetadata());
         if (item.hasTagCompound())
             hole.getTagCompound().setTag(BlackHoleUnitTile.NBT_ITEM_NBT, item.getTagCompound());
@@ -173,20 +200,21 @@ public class BlackHoleUnitBlock extends CustomOrientedBlock<BlackHoleUnitTile> {
     }
 
     @Override
-    public void registerItem(@NotNull IForgeRegistry<Item> registry) {
+    public void registerItem(@NotNull final IForgeRegistry<Item> registry) {
         registry.register(new BlockStorageItem(this).setRegistryName(this.getRegistryName()));
     }
 
     public class BlockStorageItem extends ItemBlock {
 
-        public BlockStorageItem(Block block) {
+        public BlockStorageItem(final Block block) {
             super(block);
             setMaxStackSize(1);
         }
 
         @javax.annotation.Nullable
         @Override
-        public ICapabilityProvider initCapabilities(ItemStack stack, @javax.annotation.Nullable NBTTagCompound nbt) {
+        public ICapabilityProvider initCapabilities(final ItemStack stack,
+                @javax.annotation.Nullable final NBTTagCompound nbt) {
             return new StorageItemHandler(stack);
         }
     }
@@ -196,7 +224,7 @@ public class BlackHoleUnitBlock extends CustomOrientedBlock<BlackHoleUnitTile> {
         private final ItemStack itemStack;
         private final IItemHandler itemHandler;
 
-        public StorageItemHandler(ItemStack itemStack) {
+        public StorageItemHandler(final ItemStack itemStack) {
             this.itemStack = itemStack;
             this.itemHandler = new IItemHandler() {
                 @Override
@@ -206,18 +234,22 @@ public class BlackHoleUnitBlock extends CustomOrientedBlock<BlackHoleUnitTile> {
 
                 @Nonnull
                 @Override
-                public ItemStack getStackInSlot(int slot) {
-                    ItemStack inside = getItemStack(itemStack);
+                public ItemStack getStackInSlot(final int slot) {
+                    final ItemStack inside = getItemStack(itemStack);
                     inside.setCount(getAmount(itemStack));
                     return inside;
                 }
 
                 @Nonnull
                 @Override
-                public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-                    if (stack.isEmpty()) return ItemStack.EMPTY;
-                    if (Integer.MAX_VALUE < stack.getCount() + (long) getAmount(itemStack)) return stack;
-                    if (!getItemStack(itemStack).isEmpty() && !ItemHandlerHelper.canItemStacksStack(stack, getItemStack(itemStack)))
+                public ItemStack insertItem(final int slot, @Nonnull final ItemStack stack,
+                        final boolean simulate) {
+                    if (stack.isEmpty())
+                        return ItemStack.EMPTY;
+                    if (Integer.MAX_VALUE < stack.getCount() + (long) getAmount(itemStack))
+                        return stack;
+                    if (!getItemStack(itemStack).isEmpty() && !ItemHandlerHelper
+                            .canItemStacksStack(stack, getItemStack(itemStack)))
                         return stack;
                     if (!simulate) {
                         if (getItemStack(itemStack).isEmpty()) {
@@ -230,9 +262,10 @@ public class BlackHoleUnitBlock extends CustomOrientedBlock<BlackHoleUnitTile> {
 
                 @Nonnull
                 @Override
-                public ItemStack extractItem(int slot, int amount, boolean simulate) {
-                    int extracted = Math.min(getAmount(itemStack), amount);
-                    ItemStack extractedStack = getItemStack(itemStack).copy();
+                public ItemStack extractItem(final int slot, final int amount,
+                        final boolean simulate) {
+                    final int extracted = Math.min(getAmount(itemStack), amount);
+                    final ItemStack extractedStack = getItemStack(itemStack).copy();
                     extractedStack.setCount(extracted);
                     if (!simulate) {
                         setAmount(itemStack, Math.max(0, getAmount(itemStack) - extracted));
@@ -241,21 +274,24 @@ public class BlackHoleUnitBlock extends CustomOrientedBlock<BlackHoleUnitTile> {
                 }
 
                 @Override
-                public int getSlotLimit(int slot) {
+                public int getSlotLimit(final int slot) {
                     return Integer.MAX_VALUE;
                 }
             };
         }
 
         @Override
-        public boolean hasCapability(@Nonnull Capability<?> capability, @Nullable EnumFacing facing) {
+        public boolean hasCapability(@Nonnull final Capability<?> capability,
+                @Nullable final EnumFacing facing) {
             return capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY;
         }
 
         @Nullable
         @Override
-        public <T> T getCapability(@Nonnull Capability<T> capability, @Nullable EnumFacing facing) {
-            if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) return (T) itemHandler;
+        public <T> T getCapability(@Nonnull final Capability<T> capability,
+                @Nullable final EnumFacing facing) {
+            if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+                return (T) itemHandler;
             return null;
         }
     }

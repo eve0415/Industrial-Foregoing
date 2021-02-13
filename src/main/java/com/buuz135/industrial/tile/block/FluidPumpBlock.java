@@ -44,19 +44,17 @@ public class FluidPumpBlock extends CustomAreaOrientedBlock<FluidPumpTile> {
 
     @Override
     public void createRecipe() {
-        RecipeUtils.addShapedRecipe(new ItemStack(this), "pbp", "lmw", "pgp",
-                'p', ItemRegistry.plastic,
-                'b', Items.BUCKET,
-                'l', Items.LAVA_BUCKET,
-                'w', Items.WATER_BUCKET,
-                'm', MachineCaseItem.INSTANCE,
-                'g', "gearGold");
+        RecipeUtils.addShapedRecipe(new ItemStack(this), "pbp", "lmw", "pgp", 'p', ItemRegistry.plastic, 'b',
+                Items.BUCKET, 'l', Items.LAVA_BUCKET, 'w', Items.WATER_BUCKET, 'm', MachineCaseItem.INSTANCE, 'g',
+                "gearGold");
     }
 
     @Override
     public void getMachineConfig() {
         super.getMachineConfig();
-        replaceFluidWithCobble = CustomConfiguration.config.getBoolean("replaceFluidWithCobble", "machines" + Configuration.CATEGORY_SPLITTER + this.getRegistryName().getPath().toString(), true, "Fluid pump should replace the picked up fluid with cobblestone");
+        replaceFluidWithCobble = CustomConfiguration.config.getBoolean("replaceFluidWithCobble",
+                "machines" + Configuration.CATEGORY_SPLITTER + this.getRegistryName().getPath().toString(), true,
+                "Fluid pump should replace the picked up fluid with cobblestone");
     }
 
     @Override

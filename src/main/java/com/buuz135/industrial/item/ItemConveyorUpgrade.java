@@ -45,23 +45,28 @@ public class ItemConveyorUpgrade extends IFCustomItem {
     }
 
     @Override
-    public int getMetadata(int damage) {
+    public int getMetadata(final int damage) {
         return damage;
     }
 
     @Override
-    public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public EnumActionResult onItemUse(final EntityPlayer player, final World worldIn,
+            final BlockPos pos, final EnumHand hand, final EnumFacing facing, final float hitX,
+            final float hitY, final float hitZ) {
         if (!player.isSneaking()) {
-            TileEntity tile = worldIn.getTileEntity(pos);
-            if (tile instanceof TileEntityConveyor && ((TileEntityConveyor) tile).getType().isVertical())
+            final TileEntity tile = worldIn.getTileEntity(pos);
+            if (tile instanceof TileEntityConveyor
+                    && ((TileEntityConveyor) tile).getType().isVertical())
                 return EnumActionResult.PASS;
             if (tile instanceof IConveyorContainer) {
-                ConveyorUpgradeFactory factory = IFRegistries.CONVEYOR_UPGRADE_REGISTRY.getValue(player.getHeldItem(hand).getMetadata() + 1);
+                final ConveyorUpgradeFactory factory = IFRegistries.CONVEYOR_UPGRADE_REGISTRY
+                        .getValue(player.getHeldItem(hand).getMetadata() + 1);
                 if (factory != null) {
-                    EnumFacing side = factory.getSideForPlacement(worldIn, pos, player);
+                    final EnumFacing side = factory.getSideForPlacement(worldIn, pos, player);
                     if (!((IConveyorContainer) tile).hasUpgrade(side)) {
                         ((IConveyorContainer) tile).addUpgrade(side, factory);
-                        if (!player.isCreative()) player.getHeldItem(hand).shrink(1);
+                        if (!player.isCreative())
+                            player.getHeldItem(hand).shrink(1);
                         return EnumActionResult.SUCCESS;
                     }
                 }
@@ -71,24 +76,30 @@ public class ItemConveyorUpgrade extends IFCustomItem {
     }
 
     @Override
-    public String getTranslationKey(ItemStack stack) {
-        ConveyorUpgradeFactory factory = IFRegistries.CONVEYOR_UPGRADE_REGISTRY.getValue(stack.getMetadata() + 1);
+    public String getTranslationKey(final ItemStack stack) {
+        final ConveyorUpgradeFactory factory =
+                IFRegistries.CONVEYOR_UPGRADE_REGISTRY.getValue(stack.getMetadata() + 1);
         if (factory == null)
             return "conveyor.upgrade.error";
-        return String.format("conveyor.upgrade.%s.%s", factory.getRegistryName().getNamespace(), factory.getRegistryName().getPath());
+        return String.format("conveyor.upgrade.%s.%s", factory.getRegistryName().getNamespace(),
+                factory.getRegistryName().getPath());
     }
 
     @Override
     public void registerRender() {
-        for (ConveyorUpgradeFactory factory : IFRegistries.CONVEYOR_UPGRADE_REGISTRY.getValuesCollection()) {
-            ModelLoader.setCustomModelResourceLocation(this, IFRegistries.CONVEYOR_UPGRADE_REGISTRY.getID(factory) - 1, new ModelResourceLocation(factory.getItemModel(), "inventory"));
+        for (final ConveyorUpgradeFactory factory : IFRegistries.CONVEYOR_UPGRADE_REGISTRY
+                .getValuesCollection()) {
+            ModelLoader.setCustomModelResourceLocation(this,
+                    IFRegistries.CONVEYOR_UPGRADE_REGISTRY.getID(factory) - 1,
+                    new ModelResourceLocation(factory.getItemModel(), "inventory"));
         }
     }
 
     @Override
-    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
+    public void getSubItems(final CreativeTabs tab, final NonNullList<ItemStack> items) {
         if (this.isInCreativeTab(tab)) {
-            for (ConveyorUpgradeFactory factory : IFRegistries.CONVEYOR_UPGRADE_REGISTRY.getValuesCollection()) {
+            for (final ConveyorUpgradeFactory factory : IFRegistries.CONVEYOR_UPGRADE_REGISTRY
+                    .getValuesCollection()) {
                 items.add(new ItemStack(this, 1, IFRegistries.CONVEYOR_UPGRADE_REGISTRY.getID(factory) - 1));
             }
         }

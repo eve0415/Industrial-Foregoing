@@ -3,21 +3,20 @@
  *
  * Copyright 2019, Buuz135
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in the
- * Software without restriction, including without limitation the rights to use, copy,
- * modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
- * and to permit persons to whom the Software is furnished to do so, subject to the
- * following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+ * associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all copies
- * or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
- * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
- * PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
- * FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
- * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+ * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 package com.buuz135.industrial.tile.agriculture;
 
@@ -45,21 +44,23 @@ public class SewageCompostSolidifierTile extends CustomElectricMachine {
     @Override
     protected void initializeInventories() {
         super.initializeInventories();
-        sewage = this.addFluidTank(FluidsRegistry.SEWAGE, 8000, EnumDyeColor.BROWN, "Sewage tank", new BoundingRectangle(50, 25, 18, 54));
+        sewage = this.addFluidTank(FluidsRegistry.SEWAGE, 8000, EnumDyeColor.BROWN, "Sewage tank",
+                new BoundingRectangle(50, 25, 18, 54));
         outFertilizer = new ItemStackHandler(4 * 3) {
             @Override
-            protected void onContentsChanged(int slot) {
+            protected void onContentsChanged(final int slot) {
                 SewageCompostSolidifierTile.this.markDirty();
             }
         };
-        this.addInventory(new CustomColoredItemHandler(outFertilizer, EnumDyeColor.ORANGE, "Output Items", 18 * 5 + 3, 25, 4, 3) {
+        this.addInventory(new CustomColoredItemHandler(outFertilizer, EnumDyeColor.ORANGE,
+                "Output Items", 18 * 5 + 3, 25, 4, 3) {
             @Override
-            public boolean canInsertItem(int slot, ItemStack stack) {
+            public boolean canInsertItem(final int slot, final ItemStack stack) {
                 return false;
             }
 
             @Override
-            public boolean canExtractItem(int slot) {
+            public boolean canExtractItem(final int slot) {
                 return true;
             }
         });
@@ -68,10 +69,12 @@ public class SewageCompostSolidifierTile extends CustomElectricMachine {
 
     @Override
     protected float performWork() {
-        if (WorkUtils.isDisabled(this.getBlockType())) return 0;
+        if (WorkUtils.isDisabled(this.getBlockType()))
+            return 0;
 
-        ItemStack stack = new ItemStack(ItemRegistry.fertilizer, 1);
-        if (sewage.getFluid() != null && sewage.drain(2000, false).amount == 2000 && ItemHandlerHelper.insertItem(outFertilizer, stack, true).isEmpty()) {
+        final ItemStack stack = new ItemStack(ItemRegistry.fertilizer, 1);
+        if (sewage.getFluid() != null && sewage.drain(2000, false).amount == 2000
+                && ItemHandlerHelper.insertItem(outFertilizer, stack, true).isEmpty()) {
             sewage.drain(2000, true);
             ItemHandlerHelper.insertItem(outFertilizer, stack, false);
             return 1;

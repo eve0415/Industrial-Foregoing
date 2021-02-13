@@ -3,24 +3,27 @@
  *
  * Copyright 2019, Buuz135
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in the
- * Software without restriction, including without limitation the rights to use, copy,
- * modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
- * and to permit persons to whom the Software is furnished to do so, subject to the
- * following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+ * associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all copies
- * or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
- * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
- * PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
- * FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
- * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+ * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 package com.buuz135.industrial.item;
 
+import java.util.List;
+import java.util.Optional;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.buuz135.industrial.api.straw.StrawHandler;
 import com.buuz135.industrial.utils.StrawUtils;
 import net.minecraft.block.Block;
@@ -46,11 +49,6 @@ import net.minecraftforge.fluids.capability.IFluidTankProperties;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.List;
-import java.util.Optional;
-
 public class ItemStraw extends IFCustomItem {
     public ItemStraw() {
         super("straw");
@@ -59,36 +57,43 @@ public class ItemStraw extends IFCustomItem {
 
     @Override
     @Nonnull
-    public ItemStack onItemUseFinish(@Nonnull ItemStack heldStack, World world, EntityLivingBase entity) {
+    public ItemStack onItemUseFinish(@Nonnull final ItemStack heldStack, final World world,
+            final EntityLivingBase entity) {
         if (!world.isRemote && entity instanceof EntityPlayer) {
-            EntityPlayer player = (EntityPlayer) entity;
-            RayTraceResult result = rayTrace(world, player, true);
+            final EntityPlayer player = (EntityPlayer) entity;
+            final RayTraceResult result = rayTrace(world, player, true);
             if (result != null && result.typeOfHit == RayTraceResult.Type.BLOCK) {
-                BlockPos pos = result.getBlockPos();
-                IBlockState state = world.getBlockState(pos);
-                Block block = state.getBlock();
+                final BlockPos pos = result.getBlockPos();
+                final IBlockState state = world.getBlockState(pos);
+                final Block block = state.getBlock();
                 Fluid fluid = FluidRegistry.lookupFluidForBlock(block);
                 if (fluid != null) {
-                    FluidStack stack = new FluidStack(fluid, Fluid.BUCKET_VOLUME);
-                    StrawUtils.getStrawHandler(stack).ifPresent(handler -> handler.onDrink(world, pos, stack, player, false));
+                    final FluidStack stack = new FluidStack(fluid, Fluid.BUCKET_VOLUME);
+                    StrawUtils.getStrawHandler(stack).ifPresent(
+                            handler -> handler.onDrink(world, pos, stack, player, false));
                     world.setBlockToAir(pos);
                     return heldStack;
                 } else if (block.hasTileEntity(state)) {
-                    TileEntity tile = world.getTileEntity(pos);
+                    final TileEntity tile = world.getTileEntity(pos);
                     if (tile != null) {
-                        if (tile.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null)) {
-                            IFluidHandler handler = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null);
-                            IFluidTankProperties[] fluidTankProperties = handler.getTankProperties();
-                            for (IFluidTankProperties properties : fluidTankProperties) {
-                                FluidStack stack = properties.getContents();
+                        if (tile.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY,
+                                null)) {
+                            final IFluidHandler handler = tile.getCapability(
+                                    CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null);
+                            final IFluidTankProperties[] fluidTankProperties =
+                                    handler.getTankProperties();
+                            for (final IFluidTankProperties properties : fluidTankProperties) {
+                                final FluidStack stack = properties.getContents();
                                 if (stack != null) {
                                     fluid = stack.getFluid();
                                     if (fluid != null && stack.amount >= Fluid.BUCKET_VOLUME) {
-                                        FluidStack copiedStack = stack.copy();
+                                        final FluidStack copiedStack = stack.copy();
                                         copiedStack.amount = Fluid.BUCKET_VOLUME;
-                                        FluidStack out = handler.drain(copiedStack, false);
+                                        final FluidStack out = handler.drain(copiedStack, false);
                                         if (out != null && out.amount == 1000) {
-                                            StrawUtils.getStrawHandler(stack).ifPresent(strawHandler -> strawHandler.onDrink(world, pos, stack, player, true));
+                                            StrawUtils.getStrawHandler(stack).ifPresent(
+                                                    strawHandler -> strawHandler.onDrink(world, pos,
+                                                            stack, player, true));
                                             handler.drain(copiedStack, true);
                                             return heldStack;
                                         }
@@ -105,34 +110,42 @@ public class ItemStraw extends IFCustomItem {
 
     @Override
     @Nonnull
-    public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, @Nonnull EnumHand handIn) {
-        RayTraceResult result = rayTrace(worldIn, playerIn, true);
+    public ActionResult<ItemStack> onItemRightClick(final World worldIn,
+            final EntityPlayer playerIn, @Nonnull final EnumHand handIn) {
+        final RayTraceResult result = rayTrace(worldIn, playerIn, true);
         if (result != null && result.typeOfHit == RayTraceResult.Type.BLOCK) {
-            BlockPos pos = result.getBlockPos();
-            IBlockState state = worldIn.getBlockState(pos);
-            Block block = state.getBlock();
+            final BlockPos pos = result.getBlockPos();
+            final IBlockState state = worldIn.getBlockState(pos);
+            final Block block = state.getBlock();
             Fluid fluid = FluidRegistry.lookupFluidForBlock(block);
             if (fluid != null) {
-                Optional<StrawHandler> handler = StrawUtils.getStrawHandler(new FluidStack(fluid, Fluid.BUCKET_VOLUME));
+                final Optional<StrawHandler> handler =
+                        StrawUtils.getStrawHandler(new FluidStack(fluid, Fluid.BUCKET_VOLUME));
                 if (handler.isPresent())
                     playerIn.setActiveHand(handIn);
-                return ActionResult.newResult(EnumActionResult.SUCCESS, playerIn.getHeldItem(handIn));
+                return ActionResult.newResult(EnumActionResult.SUCCESS,
+                        playerIn.getHeldItem(handIn));
             } else if (block.hasTileEntity(state)) {
-                TileEntity tile = worldIn.getTileEntity(pos);
+                final TileEntity tile = worldIn.getTileEntity(pos);
                 if (tile != null) {
                     if (tile.hasCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null)) {
-                        IFluidHandler handler = tile.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null);
-                        IFluidTankProperties[] fluidTankProperties = handler.getTankProperties();
-                        for (IFluidTankProperties properties : fluidTankProperties) {
-                            FluidStack stack = properties.getContents();
+                        final IFluidHandler handler = tile.getCapability(
+                                CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null);
+                        final IFluidTankProperties[] fluidTankProperties =
+                                handler.getTankProperties();
+                        for (final IFluidTankProperties properties : fluidTankProperties) {
+                            final FluidStack stack = properties.getContents();
                             if (stack != null) {
                                 fluid = stack.getFluid();
-                                Optional<StrawHandler> strawHandler = StrawUtils.getStrawHandler(stack);
-                                if (fluid != null && strawHandler.isPresent() && stack.amount >= Fluid.BUCKET_VOLUME) {
-                                    FluidStack out = handler.drain(stack, false);
+                                final Optional<StrawHandler> strawHandler =
+                                        StrawUtils.getStrawHandler(stack);
+                                if (fluid != null && strawHandler.isPresent()
+                                        && stack.amount >= Fluid.BUCKET_VOLUME) {
+                                    final FluidStack out = handler.drain(stack, false);
                                     if (out != null && out.amount >= 1000) {
                                         playerIn.setActiveHand(handIn);
-                                        return ActionResult.newResult(EnumActionResult.SUCCESS, playerIn.getHeldItem(handIn));
+                                        return ActionResult.newResult(EnumActionResult.SUCCESS,
+                                                playerIn.getHeldItem(handIn));
                                     }
                                 }
                             }
@@ -145,19 +158,20 @@ public class ItemStraw extends IFCustomItem {
     }
 
     @Override
-    public int getMaxItemUseDuration(ItemStack stack) {
+    public int getMaxItemUseDuration(final ItemStack stack) {
         return 30;
     }
 
     @Override
     @Nonnull
-    public EnumAction getItemUseAction(ItemStack stack) {
+    public EnumAction getItemUseAction(final ItemStack stack) {
         return EnumAction.DRINK;
     }
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
+    public void addInformation(final ItemStack stack, @Nullable final World worldIn,
+            final List<String> tooltip, final ITooltipFlag flagIn) {
         super.addInformation(stack, worldIn, tooltip, flagIn);
         tooltip.add("\"The One Who Codes\"");
     }

@@ -28,7 +28,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 public class FakePlayerRideEntityHandler {
 
     @SubscribeEvent
-    public void onFakePlayerRide(EntityMountEvent entityMountEvent) {
+    public void onFakePlayerRide(final EntityMountEvent entityMountEvent) {
         if (entityMountEvent.getEntityMounting() instanceof IFFakePlayer) entityMountEvent.setCanceled(true);
     }
 }

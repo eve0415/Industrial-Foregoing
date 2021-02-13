@@ -3,21 +3,20 @@
  *
  * Copyright 2019, Buuz135
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in the
- * Software without restriction, including without limitation the rights to use, copy,
- * modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
- * and to permit persons to whom the Software is furnished to do so, subject to the
- * following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+ * associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all copies
- * or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
- * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
- * PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
- * FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
- * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+ * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 package com.buuz135.industrial.proxy.network;
 
@@ -40,7 +39,8 @@ public class ConveyorSplittingSyncEntityMessage implements IMessage {
     private int entityID;
     private EnumFacing facingCurrent;
 
-    public ConveyorSplittingSyncEntityMessage(BlockPos pos, int entityID, EnumFacing facingCurrent) {
+    public ConveyorSplittingSyncEntityMessage(final BlockPos pos, final int entityID,
+            final EnumFacing facingCurrent) {
         this.pos = pos;
         this.entityID = entityID;
         this.facingCurrent = facingCurrent;
@@ -50,32 +50,37 @@ public class ConveyorSplittingSyncEntityMessage implements IMessage {
     }
 
     @Override
-    public void fromBytes(ByteBuf buf) {
-        PacketBuffer buffer = new PacketBuffer(buf);
+    public void fromBytes(final ByteBuf buf) {
+        final PacketBuffer buffer = new PacketBuffer(buf);
         this.pos = buffer.readBlockPos();
         this.entityID = buffer.readInt();
         this.facingCurrent = buffer.readEnumValue(EnumFacing.class);
     }
 
     @Override
-    public void toBytes(ByteBuf buf) {
-        PacketBuffer buffer = new PacketBuffer(buf);
+    public void toBytes(final ByteBuf buf) {
+        final PacketBuffer buffer = new PacketBuffer(buf);
         buffer.writeBlockPos(pos);
         buffer.writeInt(entityID);
         buffer.writeEnumValue(facingCurrent);
     }
 
-    public static class Handler implements IMessageHandler<ConveyorSplittingSyncEntityMessage, IMessage> {
+    public static class Handler
+            implements IMessageHandler<ConveyorSplittingSyncEntityMessage, IMessage> {
 
         @Override
-        public IMessage onMessage(ConveyorSplittingSyncEntityMessage message, MessageContext ctx) {
+        public IMessage onMessage(final ConveyorSplittingSyncEntityMessage message,
+                final MessageContext ctx) {
             Minecraft.getMinecraft().addScheduledTask(() -> {
-                TileEntity entity = Minecraft.getMinecraft().player.world.getTileEntity(message.pos);
+                final TileEntity entity =
+                        Minecraft.getMinecraft().player.world.getTileEntity(message.pos);
                 if (entity instanceof TileEntityConveyor) {
                     if (((TileEntityConveyor) entity).hasUpgrade(message.facingCurrent)) {
-                        ConveyorUpgrade upgrade = ((TileEntityConveyor) entity).getUpgradeMap().get(message.facingCurrent);
+                        final ConveyorUpgrade upgrade = ((TileEntityConveyor) entity)
+                                .getUpgradeMap().get(message.facingCurrent);
                         if (upgrade instanceof ConveyorSplittingUpgrade) {
-                            ((ConveyorSplittingUpgrade) upgrade).handlingEntities.add(message.entityID);
+                            ((ConveyorSplittingUpgrade) upgrade).handlingEntities
+                                    .add(message.entityID);
                         }
                         ((TileEntityConveyor) entity).getEntityFilter().add(message.entityID);
                     }

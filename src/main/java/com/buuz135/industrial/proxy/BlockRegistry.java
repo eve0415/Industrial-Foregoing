@@ -3,24 +3,24 @@
  *
  * Copyright 2019, Buuz135
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in the
- * Software without restriction, including without limitation the rights to use, copy,
- * modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
- * and to permit persons to whom the Software is furnished to do so, subject to the
- * following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+ * associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all copies
- * or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
- * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
- * PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
- * FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
- * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+ * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 package com.buuz135.industrial.proxy;
 
+import java.util.Random;
 import com.buuz135.industrial.entity.EntityPinkSlime;
 import com.buuz135.industrial.fluid.IFCustomFluidBlock;
 import com.buuz135.industrial.proxy.block.BlockBase;
@@ -29,7 +29,64 @@ import com.buuz135.industrial.proxy.block.BlockLabel;
 import com.buuz135.industrial.proxy.client.BlockRenderRegistry;
 import com.buuz135.industrial.proxy.client.FluidsRenderRegistry;
 import com.buuz135.industrial.proxy.client.ItemRenderRegistry;
-import com.buuz135.industrial.tile.block.*;
+import com.buuz135.industrial.tile.block.AnimalByproductRecolectorBlock;
+import com.buuz135.industrial.tile.block.AnimalGrowthIncreaserBlock;
+import com.buuz135.industrial.tile.block.AnimalIndependenceSelectorBlock;
+import com.buuz135.industrial.tile.block.AnimalResourceHarvesterBlock;
+import com.buuz135.industrial.tile.block.AnimalStockIncreaserBlock;
+import com.buuz135.industrial.tile.block.BioReactorBlock;
+import com.buuz135.industrial.tile.block.BiofuelGeneratorBlock;
+import com.buuz135.industrial.tile.block.BlackHoleControllerBlock;
+import com.buuz135.industrial.tile.block.BlackHoleControllerBlockDeprecated;
+import com.buuz135.industrial.tile.block.BlackHoleTankBlock;
+import com.buuz135.industrial.tile.block.BlackHoleUnitBlock;
+import com.buuz135.industrial.tile.block.BlockDestroyerBlock;
+import com.buuz135.industrial.tile.block.BlockPlacerBlock;
+import com.buuz135.industrial.tile.block.CropEnrichMaterialInjectorBlock;
+import com.buuz135.industrial.tile.block.CropRecolectorBlock;
+import com.buuz135.industrial.tile.block.CropSowerBlock;
+import com.buuz135.industrial.tile.block.CustomOrientedBlock;
+import com.buuz135.industrial.tile.block.DyeMixerBlock;
+import com.buuz135.industrial.tile.block.EnchantmentAplicatorBlock;
+import com.buuz135.industrial.tile.block.EnchantmentExtractorBlock;
+import com.buuz135.industrial.tile.block.EnchantmentInvokerBlock;
+import com.buuz135.industrial.tile.block.EnchantmentRefinerBlock;
+import com.buuz135.industrial.tile.block.EnergyFieldProviderBlock;
+import com.buuz135.industrial.tile.block.FluidCrafterBlock;
+import com.buuz135.industrial.tile.block.FluidDictionaryConverterBlock;
+import com.buuz135.industrial.tile.block.FluidPumpBlock;
+import com.buuz135.industrial.tile.block.FrosterBlock;
+import com.buuz135.industrial.tile.block.HydratorBlock;
+import com.buuz135.industrial.tile.block.ItemSplitterBlock;
+import com.buuz135.industrial.tile.block.LaserBaseBlock;
+import com.buuz135.industrial.tile.block.LaserDrillBlock;
+import com.buuz135.industrial.tile.block.LatexProcessingUnitBlock;
+import com.buuz135.industrial.tile.block.LavaFabricatorBlock;
+import com.buuz135.industrial.tile.block.MaterialStoneWorkFactoryBlock;
+import com.buuz135.industrial.tile.block.MobDetectorBlock;
+import com.buuz135.industrial.tile.block.MobDuplicatorBlock;
+import com.buuz135.industrial.tile.block.MobRelocatorBlock;
+import com.buuz135.industrial.tile.block.MobSlaughterFactoryBlock;
+import com.buuz135.industrial.tile.block.OreDictionaryConverterBlock;
+import com.buuz135.industrial.tile.block.OreFermenterBlock;
+import com.buuz135.industrial.tile.block.OreProcessorBlock;
+import com.buuz135.industrial.tile.block.OreSieveBlock;
+import com.buuz135.industrial.tile.block.OreWasherBlock;
+import com.buuz135.industrial.tile.block.PetrifiedFuelGeneratorBlock;
+import com.buuz135.industrial.tile.block.PitifulFuelGeneratorBlock;
+import com.buuz135.industrial.tile.block.PlantInteractorBlock;
+import com.buuz135.industrial.tile.block.PotionEnervatorBlock;
+import com.buuz135.industrial.tile.block.ProteinGeneratorBlock;
+import com.buuz135.industrial.tile.block.ProteinReactorBlock;
+import com.buuz135.industrial.tile.block.ResourcefulFurnaceBlock;
+import com.buuz135.industrial.tile.block.SewageCompostSolidiferBlock;
+import com.buuz135.industrial.tile.block.SludgeRefinerBlock;
+import com.buuz135.industrial.tile.block.SporesRecreatorBlock;
+import com.buuz135.industrial.tile.block.TreeFluidExtractorBlock;
+import com.buuz135.industrial.tile.block.VillagerTradeExchangerBlock;
+import com.buuz135.industrial.tile.block.WaterCondensatorBlock;
+import com.buuz135.industrial.tile.block.WaterResourcesCollectorBlock;
+import com.buuz135.industrial.tile.block.WitherBuilderBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -46,33 +103,43 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.Random;
-
 public class BlockRegistry {
 
-    public static PetrifiedFuelGeneratorBlock petrifiedFuelGeneratorBlock = new PetrifiedFuelGeneratorBlock();
+    public static PetrifiedFuelGeneratorBlock petrifiedFuelGeneratorBlock =
+            new PetrifiedFuelGeneratorBlock();
     public static EnchantmentRefinerBlock enchantmentRefinerBlock = new EnchantmentRefinerBlock();
-    public static EnchantmentExtractorBlock enchantmentExtractorBlock = new EnchantmentExtractorBlock();
-    public static EnchantmentAplicatorBlock enchantmentAplicatorBlock = new EnchantmentAplicatorBlock();
+    public static EnchantmentExtractorBlock enchantmentExtractorBlock =
+            new EnchantmentExtractorBlock();
+    public static EnchantmentAplicatorBlock enchantmentAplicatorBlock =
+            new EnchantmentAplicatorBlock();
     public static MobRelocatorBlock mobRelocatorBlock = new MobRelocatorBlock();
     public static PotionEnervatorBlock potionEnervatorBlock = new PotionEnervatorBlock();
-    public static AnimalIndependenceSelectorBlock animalIndependenceSelectorBlock = new AnimalIndependenceSelectorBlock();
-    public static AnimalStockIncreaserBlock animalStockIncreaserBlock = new AnimalStockIncreaserBlock();
+    public static AnimalIndependenceSelectorBlock animalIndependenceSelectorBlock =
+            new AnimalIndependenceSelectorBlock();
+    public static AnimalStockIncreaserBlock animalStockIncreaserBlock =
+            new AnimalStockIncreaserBlock();
     public static CropSowerBlock cropSowerBlock = new CropSowerBlock();
-    public static CropEnrichMaterialInjectorBlock cropEnrichMaterialInjectorBlock = new CropEnrichMaterialInjectorBlock();
+    public static CropEnrichMaterialInjectorBlock cropEnrichMaterialInjectorBlock =
+            new CropEnrichMaterialInjectorBlock();
     public static CropRecolectorBlock cropRecolectorBlock = new CropRecolectorBlock();
     public static BlackHoleUnitBlock blackHoleUnitBlock = new BlackHoleUnitBlock();
     public static WaterCondensatorBlock waterCondensatorBlock = new WaterCondensatorBlock();
-    public static WaterResourcesCollectorBlock waterResourcesCollectorBlock = new WaterResourcesCollectorBlock();
-    public static AnimalResourceHarvesterBlock animalResourceHarvesterBlock = new AnimalResourceHarvesterBlock();
-    public static MobSlaughterFactoryBlock mobSlaughterFactoryBlock = new MobSlaughterFactoryBlock();
+    public static WaterResourcesCollectorBlock waterResourcesCollectorBlock =
+            new WaterResourcesCollectorBlock();
+    public static AnimalResourceHarvesterBlock animalResourceHarvesterBlock =
+            new AnimalResourceHarvesterBlock();
+    public static MobSlaughterFactoryBlock mobSlaughterFactoryBlock =
+            new MobSlaughterFactoryBlock();
     public static MobDuplicatorBlock mobDuplicatorBlock = new MobDuplicatorBlock();
     public static BlockDestroyerBlock blockDestroyerBlock = new BlockDestroyerBlock();
     public static BlockPlacerBlock blockPlacerBlock = new BlockPlacerBlock();
     public static TreeFluidExtractorBlock treeFluidExtractorBlock = new TreeFluidExtractorBlock();
-    public static LatexProcessingUnitBlock latexProcessingUnitBlock = new LatexProcessingUnitBlock();
-    public static SewageCompostSolidiferBlock sewageCompostSolidiferBlock = new SewageCompostSolidiferBlock();
-    public static AnimalByproductRecolectorBlock animalByproductRecolectorBlock = new AnimalByproductRecolectorBlock();
+    public static LatexProcessingUnitBlock latexProcessingUnitBlock =
+            new LatexProcessingUnitBlock();
+    public static SewageCompostSolidiferBlock sewageCompostSolidiferBlock =
+            new SewageCompostSolidiferBlock();
+    public static AnimalByproductRecolectorBlock animalByproductRecolectorBlock =
+            new AnimalByproductRecolectorBlock();
     public static SludgeRefinerBlock sludgeRefinerBlock = new SludgeRefinerBlock();
     public static MobDetectorBlock mobDetectorBlock = new MobDetectorBlock();
     public static LavaFabricatorBlock lavaFabricatorBlock = new LavaFabricatorBlock();
@@ -81,18 +148,25 @@ public class BlockRegistry {
     public static LaserBaseBlock laserBaseBlock = new LaserBaseBlock();
     public static LaserDrillBlock laserDrillBlock = new LaserDrillBlock();
     public static OreProcessorBlock oreProcessorBlock = new OreProcessorBlock();
-    public static BlackHoleControllerBlockDeprecated blackHoleControllerBlockDeprecated = new BlackHoleControllerBlockDeprecated();
-    public static BlackHoleControllerBlock blackHoleControllerBlock = new BlackHoleControllerBlock();
+    public static BlackHoleControllerBlockDeprecated blackHoleControllerBlockDeprecated =
+            new BlackHoleControllerBlockDeprecated();
+    public static BlackHoleControllerBlock blackHoleControllerBlock =
+            new BlackHoleControllerBlock();
     public static DyeMixerBlock dyeMixerBlock = new DyeMixerBlock();
     public static EnchantmentInvokerBlock enchantmentInvokerBlock = new EnchantmentInvokerBlock();
     public static SporesRecreatorBlock sporesRecreatorBlock = new SporesRecreatorBlock();
-    public static AnimalGrowthIncreaserBlock animalGrowthIncreaserBlock = new AnimalGrowthIncreaserBlock();
-    public static MaterialStoneWorkFactoryBlock materialStoneWorkFactoryBlock = new MaterialStoneWorkFactoryBlock();
+    public static AnimalGrowthIncreaserBlock animalGrowthIncreaserBlock =
+            new AnimalGrowthIncreaserBlock();
+    public static MaterialStoneWorkFactoryBlock materialStoneWorkFactoryBlock =
+            new MaterialStoneWorkFactoryBlock();
     public static BlackHoleTankBlock blackHoleTankBlock = new BlackHoleTankBlock();
     public static ResourcefulFurnaceBlock resourcefulFurnaceBlock = new ResourcefulFurnaceBlock();
-    public static VillagerTradeExchangerBlock villagerTradeExchangerBlock = new VillagerTradeExchangerBlock();
-    public static EnergyFieldProviderBlock energyFieldProviderBlock = new EnergyFieldProviderBlock();
-    public static OreDictionaryConverterBlock oreDictionaryConverterBlock = new OreDictionaryConverterBlock();
+    public static VillagerTradeExchangerBlock villagerTradeExchangerBlock =
+            new VillagerTradeExchangerBlock();
+    public static EnergyFieldProviderBlock energyFieldProviderBlock =
+            new EnergyFieldProviderBlock();
+    public static OreDictionaryConverterBlock oreDictionaryConverterBlock =
+            new OreDictionaryConverterBlock();
     public static ProteinReactorBlock proteinReactorBlock = new ProteinReactorBlock();
     public static ProteinGeneratorBlock proteinGeneratorBlock = new ProteinGeneratorBlock();
     public static HydratorBlock hydratorBlock = new HydratorBlock();
@@ -101,32 +175,54 @@ public class BlockRegistry {
     public static FluidCrafterBlock fluidCrafterBlock = new FluidCrafterBlock();
     public static PlantInteractorBlock plantInteractorBlock = new PlantInteractorBlock();
     public static ItemSplitterBlock itemSplitterBlock = new ItemSplitterBlock();
-    public static FluidDictionaryConverterBlock fluidDictionaryConverterBlock = new FluidDictionaryConverterBlock();
+    public static FluidDictionaryConverterBlock fluidDictionaryConverterBlock =
+            new FluidDictionaryConverterBlock();
     public static FrosterBlock frosterBlock = new FrosterBlock();
     public static OreWasherBlock oreWasherBlock = new OreWasherBlock();
     public static OreFermenterBlock oreFermenterBlock = new OreFermenterBlock();
     public static OreSieveBlock oreSieveBlock = new OreSieveBlock();
-    public static PitifulFuelGeneratorBlock pitifulFuelGeneratorBlock = new PitifulFuelGeneratorBlock();
+    public static PitifulFuelGeneratorBlock pitifulFuelGeneratorBlock =
+            new PitifulFuelGeneratorBlock();
 
-    public static IFCustomFluidBlock BLOCK_ESSENCE = new IFCustomFluidBlock(FluidsRegistry.ESSENCE, Material.WATER, entityLivingBase -> entityLivingBase.addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 20 * 15, 0)));
-    public static IFCustomFluidBlock BLOCK_MILK = new IFCustomFluidBlock(FluidsRegistry.MILK, Material.WATER, EntityLivingBase::clearActivePotions);
-    public static IFCustomFluidBlock BLOCK_MEAT = new IFCustomFluidBlock(FluidsRegistry.MEAT, Material.WATER, entityLivingBase -> entityLivingBase.addPotionEffect(new PotionEffect(MobEffects.SATURATION, 1, 1)));
-    public static IFCustomFluidBlock BLOCK_LATEX = new IFCustomFluidBlock(FluidsRegistry.LATEX, Material.WATER, entityLivingBase -> entityLivingBase.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 20 * 15, 5)));
-    public static IFCustomFluidBlock BLOCK_SEWAGE = new IFCustomFluidBlock(FluidsRegistry.SEWAGE, Material.WATER, entityLivingBase -> entityLivingBase.addPotionEffect(new PotionEffect(MobEffects.POISON, 20, 0)));
-    public static IFCustomFluidBlock BLOCK_SLUDGE = new IFCustomFluidBlock(FluidsRegistry.SLUDGE, Material.LAVA, entityLivingBase -> entityLivingBase.addPotionEffect(new PotionEffect(MobEffects.WITHER, 1, 0)));
-    public static IFCustomFluidBlock BLOCK_BIOFUEL = new IFCustomFluidBlock(FluidsRegistry.BIOFUEL, Material.WATER, entityLivingBase -> entityLivingBase.addPotionEffect(new PotionEffect(MobEffects.SPEED, 20, 1)));
-    public static IFCustomFluidBlock BLOCK_PINK_SLIME = (IFCustomFluidBlock) new IFCustomFluidBlock(FluidsRegistry.PINK_SLIME, Material.WATER, entityLivingBase -> entityLivingBase.addPotionEffect(new PotionEffect(MobEffects.GLOWING, 20 * 10, 0))) {
-        @Override
-        public void randomTick(World worldIn, BlockPos pos, IBlockState state, Random random) {
-            if (state.getBlock() instanceof BlockFluidClassic && ((BlockFluidClassic) state.getBlock()).isSourceBlock(worldIn, pos)) {
-                worldIn.setBlockToAir(pos);
-                EntityPinkSlime pinkSlime = new EntityPinkSlime(worldIn);
-                pinkSlime.setPosition(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
-                worldIn.spawnEntity(pinkSlime);
-            }
-        }
-    }.setTickRandomly(true);
-    public static IFCustomFluidBlock BLOCK_PROTEIN = new IFCustomFluidBlock(FluidsRegistry.PROTEIN, Material.WATER, entityLivingBase -> entityLivingBase.addPotionEffect(new PotionEffect(MobEffects.HASTE, 20 * 3, 0)));
+    public static IFCustomFluidBlock BLOCK_ESSENCE = new IFCustomFluidBlock(FluidsRegistry.ESSENCE,
+            Material.WATER, entityLivingBase -> entityLivingBase
+                    .addPotionEffect(new PotionEffect(MobEffects.NIGHT_VISION, 20 * 15, 0)));
+    public static IFCustomFluidBlock BLOCK_MILK = new IFCustomFluidBlock(FluidsRegistry.MILK,
+            Material.WATER, EntityLivingBase::clearActivePotions);
+    public static IFCustomFluidBlock BLOCK_MEAT = new IFCustomFluidBlock(FluidsRegistry.MEAT,
+            Material.WATER, entityLivingBase -> entityLivingBase
+                    .addPotionEffect(new PotionEffect(MobEffects.SATURATION, 1, 1)));
+    public static IFCustomFluidBlock BLOCK_LATEX = new IFCustomFluidBlock(FluidsRegistry.LATEX,
+            Material.WATER, entityLivingBase -> entityLivingBase
+                    .addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 20 * 15, 5)));
+    public static IFCustomFluidBlock BLOCK_SEWAGE = new IFCustomFluidBlock(FluidsRegistry.SEWAGE,
+            Material.WATER, entityLivingBase -> entityLivingBase
+                    .addPotionEffect(new PotionEffect(MobEffects.POISON, 20, 0)));
+    public static IFCustomFluidBlock BLOCK_SLUDGE = new IFCustomFluidBlock(FluidsRegistry.SLUDGE,
+            Material.LAVA, entityLivingBase -> entityLivingBase
+                    .addPotionEffect(new PotionEffect(MobEffects.WITHER, 1, 0)));
+    public static IFCustomFluidBlock BLOCK_BIOFUEL = new IFCustomFluidBlock(FluidsRegistry.BIOFUEL,
+            Material.WATER, entityLivingBase -> entityLivingBase
+                    .addPotionEffect(new PotionEffect(MobEffects.SPEED, 20, 1)));
+    public static IFCustomFluidBlock BLOCK_PINK_SLIME =
+            (IFCustomFluidBlock) new IFCustomFluidBlock(FluidsRegistry.PINK_SLIME, Material.WATER,
+                    entityLivingBase -> entityLivingBase
+                            .addPotionEffect(new PotionEffect(MobEffects.GLOWING, 20 * 10, 0))) {
+                @Override
+                public void randomTick(final World worldIn, final BlockPos pos,
+                        final IBlockState state, final Random random) {
+                    if (state.getBlock() instanceof BlockFluidClassic
+                            && ((BlockFluidClassic) state.getBlock()).isSourceBlock(worldIn, pos)) {
+                        worldIn.setBlockToAir(pos);
+                        final EntityPinkSlime pinkSlime = new EntityPinkSlime(worldIn);
+                        pinkSlime.setPosition(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
+                        worldIn.spawnEntity(pinkSlime);
+                    }
+                }
+            }.setTickRandomly(true);
+    public static IFCustomFluidBlock BLOCK_PROTEIN = new IFCustomFluidBlock(FluidsRegistry.PROTEIN,
+            Material.WATER, entityLivingBase -> entityLivingBase
+                    .addPotionEffect(new PotionEffect(MobEffects.HASTE, 20 * 3, 0)));
 
     public static BlockConveyor blockConveyor = new BlockConveyor();
     public static BlockLabel blockLabel = new BlockLabel();
@@ -134,8 +230,8 @@ public class BlockRegistry {
     public static void createRecipes() {
         CustomOrientedBlock.blockList.forEach(CustomOrientedBlock::createRecipe);
         BlockBase.BLOCKS.forEach(BlockBase::createRecipe);
-        //RecipeUtils.addShapelessRecipe(new ItemStack(blackHoleUnitBlock), blackHoleUnitBlock);
-        //RecipeUtils.addShapelessRecipe(new ItemStack(blackHoleTankBlock), blackHoleTankBlock);
+        // RecipeUtils.addShapelessRecipe(new ItemStack(blackHoleUnitBlock), blackHoleUnitBlock);
+        // RecipeUtils.addShapelessRecipe(new ItemStack(blackHoleTankBlock), blackHoleTankBlock);
     }
 
     public static void poke() {
@@ -143,8 +239,9 @@ public class BlockRegistry {
     }
 
     @SubscribeEvent
-    public void registerBlocks(RegistryEvent.Register<Block> ev) {
-        CustomOrientedBlock.blockList.stream().filter(CustomOrientedBlock::isEnabled).forEach(customOrientedBlock -> customOrientedBlock.registerBlock(ev.getRegistry()));
+    public void registerBlocks(final RegistryEvent.Register<Block> ev) {
+        CustomOrientedBlock.blockList.stream().filter(CustomOrientedBlock::isEnabled).forEach(
+                customOrientedBlock -> customOrientedBlock.registerBlock(ev.getRegistry()));
         BLOCK_ESSENCE.register(ev.getRegistry());
         BLOCK_MILK.register(ev.getRegistry());
         BLOCK_MEAT.register(ev.getRegistry());
@@ -158,15 +255,16 @@ public class BlockRegistry {
     }
 
     @SubscribeEvent
-    public void registerItems(RegistryEvent.Register<Item> ev) {
-        CustomOrientedBlock.blockList.stream().filter(CustomOrientedBlock::isEnabled).forEach(customOrientedBlock -> customOrientedBlock.registerItem(ev.getRegistry()));
+    public void registerItems(final RegistryEvent.Register<Item> ev) {
+        CustomOrientedBlock.blockList.stream().filter(CustomOrientedBlock::isEnabled)
+                .forEach(customOrientedBlock -> customOrientedBlock.registerItem(ev.getRegistry()));
         ItemRegistry.registerItems(ev.getRegistry());
         BlockBase.BLOCKS.forEach(blockBase -> blockBase.registerItem(ev.getRegistry()));
     }
 
     @SubscribeEvent
     @SideOnly(Side.CLIENT)
-    public void modelRegistryEvent(ModelRegistryEvent event) {
+    public void modelRegistryEvent(final ModelRegistryEvent event) {
         ItemRenderRegistry.registerRender();
         FluidsRenderRegistry.registerRender();
         BlockRenderRegistry.registerRender();

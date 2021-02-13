@@ -42,9 +42,9 @@ public class LaserLensItem extends IFCustomItem {
     private static String[] dyes = {"Black", "Red", "Green", "Brown", "Blue", "Purple", "Cyan", "LightGray", "Gray", "Pink", "Lime", "Yellow", "LightBlue", "Magenta", "Orange", "White"};
 
     @Getter
-    private boolean inverted;
+    private final boolean inverted;
 
-    public LaserLensItem(boolean inverted) {
+    public LaserLensItem(final boolean inverted) {
         super("laser_lens" + (inverted ? "_inverted" : ""));
         setMaxStackSize(1);
         setHasSubtypes(true);
@@ -52,21 +52,25 @@ public class LaserLensItem extends IFCustomItem {
     }
 
     @Override
-    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> subItems) {
+    public void getSubItems(final CreativeTabs tab, final NonNullList<ItemStack> subItems) {
         if (isInCreativeTab(tab))
-            for (int i = 0; i < 16; ++i) subItems.add(new ItemStack(this, 1, i));
+            for (int i = 0; i < 16; ++i)
+                subItems.add(new ItemStack(this, 1, i));
     }
 
     @Override
-    public void register(IForgeRegistry<Item> items) {
+    public void register(final IForgeRegistry<Item> items) {
         super.register(items);
     }
 
     public void createRecipe() {
         for (int i = 0; i < 16; ++i) {
-            RecipeUtils.addShapedRecipe(new ItemStack(this, 1, i), " i ", "ipi", " i ", 'i', inverted ? new ItemStack(Items.IRON_INGOT) : new ItemStack(ItemRegistry.pinkSlime),
+            RecipeUtils.addShapedRecipe(new ItemStack(this, 1, i), " i ", "ipi", " i ", 'i',
+                    inverted ? new ItemStack(Items.IRON_INGOT)
+                            : new ItemStack(ItemRegistry.pinkSlime),
                     'p', new ItemStack(Blocks.STAINED_GLASS_PANE, 1, i));
-            RecipeUtils.addShapelessRecipe("recolor", new ItemStack(this, 1, i), new ItemStack(this, 1, OreDictionary.WILDCARD_VALUE), "dye" + dyes[15 - i]);
+            RecipeUtils.addShapelessRecipe("recolor", new ItemStack(this, 1, i),
+                    new ItemStack(this, 1, OreDictionary.WILDCARD_VALUE), "dye" + dyes[15 - i]);
         }
 
     }
@@ -74,11 +78,12 @@ public class LaserLensItem extends IFCustomItem {
     @Override
     public void registerRender() {
         for (int i = 0; i < 16; ++i)
-            ModelLoader.setCustomModelResourceLocation(this, i, new ModelResourceLocation(this.getRegistryName().toString() + i, "inventory"));
+            ModelLoader.setCustomModelResourceLocation(this, i,
+                    new ModelResourceLocation(this.getRegistryName().toString() + i, "inventory"));
     }
 
     @Override
-    public String getItemStackDisplayName(ItemStack stack) {
+    public String getItemStackDisplayName(final ItemStack stack) {
         return new TextComponentTranslation("item.fireworksCharge." + EnumDyeColor.byMetadata(stack.getMetadata()).getTranslationKey().replaceAll("_", "")).getFormattedText() + " " + super.getItemStackDisplayName(stack);
     }
 }

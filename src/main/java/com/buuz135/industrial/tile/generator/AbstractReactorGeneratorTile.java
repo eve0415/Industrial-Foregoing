@@ -31,9 +31,9 @@ import net.ndrei.teslacorelib.inventory.BoundingRectangle;
 public abstract class AbstractReactorGeneratorTile extends CustomGeneratorMachine {
 
     private IFluidTank tank;
-    private int generatedPower;
+    private final int generatedPower;
 
-    public AbstractReactorGeneratorTile(int id, int generatedPower) {
+    public AbstractReactorGeneratorTile(final int id, final int generatedPower) {
         super(id);
         this.generatedPower = generatedPower;
     }

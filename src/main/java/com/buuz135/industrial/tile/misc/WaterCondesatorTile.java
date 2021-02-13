@@ -3,21 +3,20 @@
  *
  * Copyright 2019, Buuz135
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in the
- * Software without restriction, including without limitation the rights to use, copy,
- * modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
- * and to permit persons to whom the Software is furnished to do so, subject to the
- * following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+ * associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all copies
- * or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
- * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
- * PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
- * FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
- * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+ * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 package com.buuz135.industrial.tile.misc;
 
@@ -44,36 +43,41 @@ public class WaterCondesatorTile extends CustomSidedTileEntity {
 
     @Override
     protected void innerUpdate() {
-        if (WorkUtils.isDisabled(this.getBlockType())) return;
-        if (this.getWorld().isRemote) return;
-        int sources = getWaterSources();
-        if (sources < 2) return;
+        if (WorkUtils.isDisabled(this.getBlockType()))
+            return;
+        if (this.getWorld().isRemote)
+            return;
+        final int sources = getWaterSources();
+        if (sources < 2)
+            return;
         fluidTank.fill(new FluidStack(FluidRegistry.WATER, sources * 100), true);
     }
 
     @Override
     protected void initializeInventories() {
         super.initializeInventories();
-        fluidTank = this.addFluidTank(FluidRegistry.WATER, 8000, EnumDyeColor.BLUE, "Water tank", new BoundingRectangle(16, 25, 18, 54));
+        fluidTank = this.addFluidTank(FluidRegistry.WATER, 8000, EnumDyeColor.BLUE, "Water tank",
+                new BoundingRectangle(16, 25, 18, 54));
     }
 
     private int getWaterSources() {
         int sources = 0;
-        for (EnumFacing facing : EnumFacing.values()) {
-            IBlockState state = this.world.getBlockState(this.getPos().offset(facing));
-            if (state.getBlock().equals(FluidRegistry.WATER.getBlock()) && state.getBlock().getMetaFromState(state) == 0)
+        for (final EnumFacing facing : EnumFacing.values()) {
+            final IBlockState state = this.world.getBlockState(this.getPos().offset(facing));
+            if (state.getBlock().equals(FluidRegistry.WATER.getBlock())
+                    && state.getBlock().getMetaFromState(state) == 0)
                 ++sources;
         }
         return sources;
     }
 
     @Override
-    protected boolean acceptsFluidItem(ItemStack stack) {
+    protected boolean acceptsFluidItem(final ItemStack stack) {
         return ItemStackUtils.acceptsFluidItem(stack);
     }
 
     @Override
-    protected void processFluidItems(ItemStackHandler fluidItems) {
+    protected void processFluidItems(final ItemStackHandler fluidItems) {
         ItemStackUtils.fillItemFromTank(fluidItems, fluidTank);
     }
 }

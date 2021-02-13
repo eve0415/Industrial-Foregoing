@@ -37,8 +37,10 @@ public class FertilizerItem extends IFCustomItem {
     }
 
     @Override
-    public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        ItemStack itemstack = player.getHeldItem(hand);
+    public EnumActionResult onItemUse(final EntityPlayer player, final World worldIn,
+            final BlockPos pos, final EnumHand hand, final EnumFacing facing, final float hitX,
+            final float hitY, final float hitZ) {
+        final ItemStack itemstack = player.getHeldItem(hand);
         if (!player.canPlayerEdit(pos.offset(facing), facing, itemstack)) return EnumActionResult.FAIL;
         if (ItemDye.applyBonemeal(itemstack, worldIn, pos, player, hand)) {
             if (!worldIn.isRemote) {

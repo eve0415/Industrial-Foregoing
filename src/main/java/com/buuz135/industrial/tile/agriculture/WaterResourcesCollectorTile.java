@@ -3,24 +3,24 @@
  *
  * Copyright 2019, Buuz135
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in the
- * Software without restriction, including without limitation the rights to use, copy,
- * modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
- * and to permit persons to whom the Software is furnished to do so, subject to the
- * following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+ * associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all copies
- * or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
- * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
- * PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
- * FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
- * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+ * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 package com.buuz135.industrial.tile.agriculture;
 
+import java.util.List;
 import com.buuz135.industrial.tile.CustomColoredItemHandler;
 import com.buuz135.industrial.tile.WorkingAreaElectricMachine;
 import com.buuz135.industrial.utils.BlockUtils;
@@ -37,8 +37,6 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
 
-import java.util.List;
-
 public class WaterResourcesCollectorTile extends WorkingAreaElectricMachine {
 
     private ItemStackHandler outFish;
@@ -52,18 +50,19 @@ public class WaterResourcesCollectorTile extends WorkingAreaElectricMachine {
         super.initializeInventories();
         outFish = new ItemStackHandler(3 * 6) {
             @Override
-            protected void onContentsChanged(int slot) {
+            protected void onContentsChanged(final int slot) {
                 WaterResourcesCollectorTile.this.markDirty();
             }
         };
-        this.addInventory(new CustomColoredItemHandler(outFish, EnumDyeColor.GREEN, "Fish output", 18 * 3, 25, 6, 3) {
+        this.addInventory(new CustomColoredItemHandler(outFish, EnumDyeColor.GREEN, "Fish output",
+                18 * 3, 25, 6, 3) {
             @Override
-            public boolean canInsertItem(int slot, ItemStack stack) {
+            public boolean canInsertItem(final int slot, final ItemStack stack) {
                 return false;
             }
 
             @Override
-            public boolean canExtractItem(int slot) {
+            public boolean canExtractItem(final int slot) {
                 return true;
             }
         });
@@ -72,19 +71,25 @@ public class WaterResourcesCollectorTile extends WorkingAreaElectricMachine {
 
     @Override
     public float work() {
-        if (WorkUtils.isDisabled(this.getBlockType())) return 0;
-        if (this.world.rand.nextBoolean() && this.world.rand.nextBoolean()) return 1;
-        List<BlockPos> blockPos = BlockUtils.getBlockPosInAABB(getWorkingArea());
+        if (WorkUtils.isDisabled(this.getBlockType()))
+            return 0;
+        if (this.world.rand.nextBoolean() && this.world.rand.nextBoolean())
+            return 1;
+        final List<BlockPos> blockPos = BlockUtils.getBlockPosInAABB(getWorkingArea());
         boolean allWaterSources = true;
-        for (BlockPos pos : blockPos) {
-            IBlockState state = this.world.getBlockState(pos);
-            if (!(state.getBlock().equals(FluidRegistry.WATER.getBlock()) && state.getBlock().getMetaFromState(state) == 0))
+        for (final BlockPos pos : blockPos) {
+            final IBlockState state = this.world.getBlockState(pos);
+            if (!(state.getBlock().equals(FluidRegistry.WATER.getBlock())
+                    && state.getBlock().getMetaFromState(state) == 0))
                 allWaterSources = false;
         }
         if (allWaterSources) {
-            LootContext.Builder lootcontext = new LootContext.Builder((WorldServer) this.world);
-            List<ItemStack> items = this.world.getLootTableManager().getLootTableFromLocation(LootTableList.GAMEPLAY_FISHING).generateLootForPools(this.world.rand, lootcontext.build());
-            for (ItemStack stack : items) {
+            final LootContext.Builder lootcontext =
+                    new LootContext.Builder((WorldServer) this.world);
+            final List<ItemStack> items = this.world.getLootTableManager()
+                    .getLootTableFromLocation(LootTableList.GAMEPLAY_FISHING)
+                    .generateLootForPools(this.world.rand, lootcontext.build());
+            for (final ItemStack stack : items) {
                 ItemHandlerHelper.insertItem(outFish, stack.copy(), false);
             }
             return 1;

@@ -3,24 +3,27 @@
  *
  * Copyright 2019, Buuz135
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in the
- * Software without restriction, including without limitation the rights to use, copy,
- * modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
- * and to permit persons to whom the Software is furnished to do so, subject to the
- * following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+ * associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all copies
- * or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
- * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
- * PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
- * FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
- * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+ * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 package com.buuz135.industrial.tile.misc;
 
+import java.util.ArrayList;
+import java.util.List;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import com.buuz135.industrial.proxy.BlockRegistry;
 import com.buuz135.industrial.tile.CustomColoredItemHandler;
 import com.buuz135.industrial.tile.CustomSidedTileEntity;
@@ -38,17 +41,13 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
-
 
 public class BlackHoleControllerTileReworked extends CustomSidedTileEntity {
 
     private ItemStackHandler storage;
-    private BlackHoleControllerItemHandler itemHandler = new BlackHoleControllerItemHandler(this);
-    private BlackHoleControllerTankHandler tankHandler = new BlackHoleControllerTankHandler(this);
+    private final BlackHoleControllerItemHandler itemHandler =
+            new BlackHoleControllerItemHandler(this);
+    private final BlackHoleControllerTankHandler tankHandler = new BlackHoleControllerTankHandler();
 
     public BlackHoleControllerTileReworked() {
         super(BlackHoleControllerTileReworked.class.getName().hashCode());
@@ -59,23 +58,27 @@ public class BlackHoleControllerTileReworked extends CustomSidedTileEntity {
         super.initializeInventories();
         storage = new ItemStackHandler(12) {
             @Override
-            protected void onContentsChanged(int slot) {
+            protected void onContentsChanged(final int slot) {
                 BlackHoleControllerTileReworked.this.markDirty();
             }
 
             @Override
-            public int getSlotLimit(int slot) {
+            public int getSlotLimit(final int slot) {
                 return 1;
             }
         };
-        this.addInventory(new CustomColoredItemHandler(storage, EnumDyeColor.YELLOW, "Black hole units", (int) (15 + 18 * 2.5), 22, 4, 3) {
+        this.addInventory(new CustomColoredItemHandler(storage, EnumDyeColor.YELLOW,
+                "Black hole units", (int) (15 + 18 * 2.5), 22, 4, 3) {
             @Override
-            public boolean canInsertItem(int slot, ItemStack stack) {
-                return stack.getItem().equals(Item.getItemFromBlock(BlockRegistry.blackHoleUnitBlock)) || stack.getItem().equals(Item.getItemFromBlock(BlockRegistry.blackHoleTankBlock));
+            public boolean canInsertItem(final int slot, final ItemStack stack) {
+                return stack.getItem()
+                        .equals(Item.getItemFromBlock(BlockRegistry.blackHoleUnitBlock))
+                        || stack.getItem()
+                                .equals(Item.getItemFromBlock(BlockRegistry.blackHoleTankBlock));
             }
 
             @Override
-            public boolean canExtractItem(int slot) {
+            public boolean canExtractItem(final int slot) {
                 return super.canExtractItem(slot);
             }
         });
@@ -93,8 +96,9 @@ public class BlackHoleControllerTileReworked extends CustomSidedTileEntity {
     }
 
     @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        if (capability == null) return false;
+    public boolean hasCapability(final Capability<?> capability, final EnumFacing facing) {
+        if (capability == null)
+            return false;
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
             return true;
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)
@@ -103,7 +107,7 @@ public class BlackHoleControllerTileReworked extends CustomSidedTileEntity {
     }
 
     @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+    public <T> T getCapability(final Capability<T> capability, final EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
             return (T) itemHandler;
         if (capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY)
@@ -113,9 +117,10 @@ public class BlackHoleControllerTileReworked extends CustomSidedTileEntity {
 
     public void dropItems() {
         for (int i = 0; i < storage.getSlots(); ++i) {
-            ItemStack stack = storage.getStackInSlot(i);
+            final ItemStack stack = storage.getStackInSlot(i);
             if (!stack.isEmpty()) {
-                InventoryHelper.spawnItemStack(this.getWorld(), pos.getX(), pos.getY(), pos.getZ(), stack);
+                InventoryHelper.spawnItemStack(this.getWorld(), pos.getX(), pos.getY(), pos.getZ(),
+                        stack);
             }
         }
     }
@@ -137,9 +142,9 @@ public class BlackHoleControllerTileReworked extends CustomSidedTileEntity {
 
     private class BlackHoleControllerItemHandler implements IItemHandler {
 
-        private BlackHoleControllerTileReworked tile;
+        private final BlackHoleControllerTileReworked tile;
 
-        public BlackHoleControllerItemHandler(BlackHoleControllerTileReworked tile) {
+        public BlackHoleControllerItemHandler(final BlackHoleControllerTileReworked tile) {
             this.tile = tile;
         }
 
@@ -150,60 +155,70 @@ public class BlackHoleControllerTileReworked extends CustomSidedTileEntity {
 
         @Nonnull
         @Override
-        public ItemStack getStackInSlot(int slot) {
+        public ItemStack getStackInSlot(final int slot) {
             if (tile.getStorage().getStackInSlot(slot).isEmpty()) {
                 return ItemStack.EMPTY;
-            } else if (tile.getStorage().getStackInSlot(slot).hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)) {
-                return tile.getStorage().getStackInSlot(slot).getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).getStackInSlot(0);
+            } else if (tile.getStorage().getStackInSlot(slot)
+                    .hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)) {
+                return tile.getStorage().getStackInSlot(slot)
+                        .getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)
+                        .getStackInSlot(0);
             }
             return ItemStack.EMPTY;
         }
 
         @Nonnull
         @Override
-        public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
+        public ItemStack insertItem(final int slot, @Nonnull final ItemStack stack,
+                final boolean simulate) {
             if (tile.getStorage().getStackInSlot(slot).isEmpty()) {
                 return stack;
-            } else if (tile.getStorage().getStackInSlot(slot).hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null) &&
-                    !tile.getStorage().getStackInSlot(slot).getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).insertItem(0, stack, true).equals(stack)) {
-                return tile.getStorage().getStackInSlot(slot).getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).insertItem(0, stack, simulate);
+            } else if (tile.getStorage().getStackInSlot(slot)
+                    .hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)
+                    && !tile.getStorage().getStackInSlot(slot)
+                            .getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)
+                            .insertItem(0, stack, true).equals(stack)) {
+                return tile.getStorage().getStackInSlot(slot)
+                        .getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)
+                        .insertItem(0, stack, simulate);
             }
             return stack;
         }
 
         @Nonnull
         @Override
-        public ItemStack extractItem(int slot, int amount, boolean simulate) {
+        public ItemStack extractItem(final int slot, final int amount, final boolean simulate) {
             if (tile.getStorage().getStackInSlot(slot).isEmpty()) {
                 return ItemStack.EMPTY;
-            } else if (tile.getStorage().getStackInSlot(slot).hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)) {
-                return tile.getStorage().getStackInSlot(slot).getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).extractItem(0, amount, simulate);
+            } else if (tile.getStorage().getStackInSlot(slot)
+                    .hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)) {
+                return tile.getStorage().getStackInSlot(slot)
+                        .getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)
+                        .extractItem(0, amount, simulate);
             }
             return ItemStack.EMPTY;
         }
 
         @Override
-        public int getSlotLimit(int slot) {
+        public int getSlotLimit(final int slot) {
             return Integer.MAX_VALUE;
         }
     }
 
     private class BlackHoleControllerTankHandler implements IFluidHandler {
 
-        private final BlackHoleControllerTileReworked tileReworked;
-
-        private BlackHoleControllerTankHandler(BlackHoleControllerTileReworked tileReworked) {
-            this.tileReworked = tileReworked;
-        }
-
         @Override
         public IFluidTankProperties[] getTankProperties() {
-            List<IFluidTankProperties> propertiesList = new ArrayList<>();
+            final List<IFluidTankProperties> propertiesList = new ArrayList<>();
             for (int i = 0; i < storage.getSlots(); i++) {
-                if (storage.getStackInSlot(i).isEmpty()) continue;
-                if (!storage.getStackInSlot(i).hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null))
+                if (storage.getStackInSlot(i).isEmpty())
                     continue;
-                for (IFluidTankProperties tankProperty : storage.getStackInSlot(i).getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null).getTankProperties()) {
+                if (!storage.getStackInSlot(i)
+                        .hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null))
+                    continue;
+                for (final IFluidTankProperties tankProperty : storage.getStackInSlot(i)
+                        .getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)
+                        .getTankProperties()) {
                     propertiesList.add(tankProperty);
                 }
             }
@@ -211,42 +226,60 @@ public class BlackHoleControllerTileReworked extends CustomSidedTileEntity {
         }
 
         @Override
-        public int fill(FluidStack resource, boolean doFill) {
+        public int fill(final FluidStack resource, final boolean doFill) {
             for (int i = 0; i < storage.getSlots(); i++) {
-                if (storage.getStackInSlot(i).isEmpty()) continue;
-                if (!storage.getStackInSlot(i).hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null))
+                if (storage.getStackInSlot(i).isEmpty())
                     continue;
-                if (storage.getStackInSlot(i).getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null).fill(resource, false) == 0)
+                if (!storage.getStackInSlot(i)
+                        .hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null))
                     continue;
-                return storage.getStackInSlot(i).getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null).fill(resource, doFill);
+                if (storage.getStackInSlot(i)
+                        .getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)
+                        .fill(resource, false) == 0)
+                    continue;
+                return storage.getStackInSlot(i)
+                        .getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)
+                        .fill(resource, doFill);
             }
             return 0;
         }
 
         @Nullable
         @Override
-        public FluidStack drain(FluidStack resource, boolean doDrain) {
+        public FluidStack drain(final FluidStack resource, final boolean doDrain) {
             for (int i = 0; i < storage.getSlots(); i++) {
-                if (storage.getStackInSlot(i).isEmpty()) continue;
-                if (!storage.getStackInSlot(i).hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null))
+                if (storage.getStackInSlot(i).isEmpty())
                     continue;
-                if (storage.getStackInSlot(i).getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null).drain(resource, false) == null)
+                if (!storage.getStackInSlot(i)
+                        .hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null))
                     continue;
-                return storage.getStackInSlot(i).getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null).drain(resource, doDrain);
+                if (storage.getStackInSlot(i)
+                        .getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)
+                        .drain(resource, false) == null)
+                    continue;
+                return storage.getStackInSlot(i)
+                        .getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)
+                        .drain(resource, doDrain);
             }
             return null;
         }
 
         @Nullable
         @Override
-        public FluidStack drain(int maxDrain, boolean doDrain) {
+        public FluidStack drain(final int maxDrain, final boolean doDrain) {
             for (int i = 0; i < storage.getSlots(); i++) {
-                if (storage.getStackInSlot(i).isEmpty()) continue;
-                if (!storage.getStackInSlot(i).hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null))
+                if (storage.getStackInSlot(i).isEmpty())
                     continue;
-                if (storage.getStackInSlot(i).getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null).drain(maxDrain, false) == null)
+                if (!storage.getStackInSlot(i)
+                        .hasCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null))
                     continue;
-                return storage.getStackInSlot(i).getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null).drain(maxDrain, doDrain);
+                if (storage.getStackInSlot(i)
+                        .getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)
+                        .drain(maxDrain, false) == null)
+                    continue;
+                return storage.getStackInSlot(i)
+                        .getCapability(CapabilityFluidHandler.FLUID_HANDLER_ITEM_CAPABILITY, null)
+                        .drain(maxDrain, doDrain);
             }
             return null;
         }

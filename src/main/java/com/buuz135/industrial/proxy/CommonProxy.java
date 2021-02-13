@@ -3,30 +3,42 @@
  *
  * Copyright 2019, Buuz135
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in the
- * Software without restriction, including without limitation the rights to use, copy,
- * modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
- * and to permit persons to whom the Software is furnished to do so, subject to the
- * following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+ * associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all copies
- * or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
- * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
- * PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
- * FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
- * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+ * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 package com.buuz135.industrial.proxy;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Random;
 import com.buuz135.industrial.IndustrialForegoing;
 import com.buuz135.industrial.api.recipe.LaserDrillEntry;
 import com.buuz135.industrial.config.CustomConfiguration;
 import com.buuz135.industrial.entity.EntityPinkSlime;
 import com.buuz135.industrial.gui.GuiHandler;
-import com.buuz135.industrial.proxy.event.*;
+import com.buuz135.industrial.proxy.event.FakePlayerRideEntityHandler;
+import com.buuz135.industrial.proxy.event.MeatFeederTickHandler;
+import com.buuz135.industrial.proxy.event.MobDeathHandler;
+import com.buuz135.industrial.proxy.event.PlantInteractorHarvestDropsHandler;
+import com.buuz135.industrial.proxy.event.SkullHandler;
+import com.buuz135.industrial.proxy.event.WorldTickHandler;
 import com.buuz135.industrial.proxy.network.ConveyorButtonInteractMessage;
 import com.buuz135.industrial.proxy.network.ConveyorSplittingSyncEntityMessage;
 import com.buuz135.industrial.proxy.network.SpecialParticleMessage;
@@ -64,39 +76,32 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
-
 public class CommonProxy {
 
-    public static final String CONTRIBUTORS_FILE = "https://raw.githubusercontent.com/Buuz135/Industrial-Foregoing/master/contributors.json";
+    public static final String CONTRIBUTORS_FILE =
+            "https://raw.githubusercontent.com/Buuz135/Industrial-Foregoing/master/contributors.json";
     public static Random random;
     public static List<String> CONTRIBUTORS = new ArrayList<>();
 
     public static DamageSource custom = new DamageSource("if_custom") {
         @Override
-        public ITextComponent getDeathMessage(EntityLivingBase entityLivingBaseIn) {
-            return new TextComponentTranslation("text.industrialforegoing.chat.slaughter_kill", entityLivingBaseIn.getDisplayName().getFormattedText(), TextFormatting.RESET);
+        public ITextComponent getDeathMessage(final EntityLivingBase entityLivingBaseIn) {
+            return new TextComponentTranslation("text.industrialforegoing.chat.slaughter_kill",
+                    entityLivingBaseIn.getDisplayName().getFormattedText(), TextFormatting.RESET);
 
         }
     };
     public static ResourceLocation PINK_SLIME_LOOT;
     public static File configFolder;
 
-    private static String readUrl(String urlString) throws Exception {
+    private static String readUrl(final String urlString) throws Exception {
         BufferedReader reader = null;
         try {
-            URL url = new URL(urlString);
+            final URL url = new URL(urlString);
             reader = new BufferedReader(new InputStreamReader(url.openStream()));
-            StringBuffer buffer = new StringBuffer();
+            final StringBuffer buffer = new StringBuffer();
             int read;
-            char[] chars = new char[1024];
+            final char[] chars = new char[1024];
             while ((read = reader.read(chars)) != -1)
                 buffer.append(chars, 0, read);
 
@@ -125,33 +130,38 @@ public class CommonProxy {
         LaserDrillEntry.loadLaserConfigs(configFolder);
 
         ItemRegistry.itemInfinityDrill.configuration(CustomConfiguration.config);
-        if (CustomConfiguration.config.hasChanged()) CustomConfiguration.config.save();
+        if (CustomConfiguration.config.hasChanged())
+            CustomConfiguration.config.save();
 
-        BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.putObject(ItemRegistry.fertilizer, new Bootstrap.BehaviorDispenseOptional() {
+        BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.putObject(ItemRegistry.fertilizer,
+                new Bootstrap.BehaviorDispenseOptional() {
 
-            protected ItemStack dispenseStack(IBlockSource source, ItemStack stack) {
-                this.successful = true;
-                World world = source.getWorld();
-                BlockPos blockpos = source.getBlockPos().offset((EnumFacing) source.getBlockState().getValue(BlockDispenser.FACING));
-                if (ItemDye.applyBonemeal(stack, world, blockpos)) {
-                    if (!world.isRemote) {
-                        world.playEvent(2005, blockpos, 0);
+                    protected ItemStack dispenseStack(final IBlockSource source,
+                            final ItemStack stack) {
+                        this.successful = true;
+                        final World world = source.getWorld();
+                        final BlockPos blockpos = source.getBlockPos().offset((EnumFacing) source
+                                .getBlockState().getValue(BlockDispenser.FACING));
+                        if (ItemDye.applyBonemeal(stack, world, blockpos)) {
+                            if (!world.isRemote) {
+                                world.playEvent(2005, blockpos, 0);
+                            }
+                        } else {
+                            this.successful = false;
+                        }
+                        return stack;
                     }
-                } else {
-                    this.successful = false;
-                }
-                return stack;
-            }
-        });
+                });
     }
 
-    public void preInit(FMLPreInitializationEvent event) {
+    public void preInit(final FMLPreInitializationEvent event) {
         configFolder = event.getModConfigurationDirectory();
         LaserDrillEntry.addOreFile(new ResourceLocation(Reference.MOD_ID, "default_ores.json"));
 
         IFRegistries.poke();
 
-        CraftingHelper.register(new ResourceLocation(Reference.MOD_ID, "configuration_value"), new ConfigurationConditionFactory());
+        CraftingHelper.register(new ResourceLocation(Reference.MOD_ID, "configuration_value"),
+                new ConfigurationConditionFactory());
         random = new Random();
 
         FluidsRegistry.registerFluids();
@@ -172,29 +182,52 @@ public class CommonProxy {
 
         NetworkRegistry.INSTANCE.registerGuiHandler(IndustrialForegoing.instance, new GuiHandler());
         int id = 0;
-        IndustrialForegoing.NETWORK.registerMessage(ConveyorButtonInteractMessage.Handler.class, ConveyorButtonInteractMessage.class, ++id, Side.SERVER);
-        IndustrialForegoing.NETWORK.registerMessage(ConveyorSplittingSyncEntityMessage.Handler.class, ConveyorSplittingSyncEntityMessage.class, ++id, Side.CLIENT);
-        IndustrialForegoing.NETWORK.registerMessage(SpecialParticleMessage.Handler.class, SpecialParticleMessage.class, ++id, Side.CLIENT);
+        IndustrialForegoing.NETWORK.registerMessage(ConveyorButtonInteractMessage.Handler.class,
+                ConveyorButtonInteractMessage.class, ++id, Side.SERVER);
+        IndustrialForegoing.NETWORK.registerMessage(
+                ConveyorSplittingSyncEntityMessage.Handler.class,
+                ConveyorSplittingSyncEntityMessage.class, ++id, Side.CLIENT);
+        IndustrialForegoing.NETWORK.registerMessage(SpecialParticleMessage.Handler.class,
+                SpecialParticleMessage.class, ++id, Side.CLIENT);
 
         CustomConfiguration.config = new Configuration(event.getSuggestedConfigurationFile());
         CustomConfiguration.config.load();
         CustomConfiguration.sync();
         CustomConfiguration.configValues = new HashMap<>();
-        CustomConfiguration.configValues.put("useTEFrames", CustomConfiguration.config.getBoolean("useTEFrames", Configuration.CATEGORY_GENERAL, true, "Adds recipes using Thermal Expansion frames"));
-        CustomConfiguration.configValues.put("useEnderIOFrames", CustomConfiguration.config.getBoolean("useEnderIOFrames", Configuration.CATEGORY_GENERAL, true, "Adds recipes using EnderIO frames"));
-        CustomConfiguration.configValues.put("useOriginalFrames", CustomConfiguration.config.getBoolean("useOriginalFrames", Configuration.CATEGORY_GENERAL, true, "Adds recipes using TeslaCoreLib frames"));
-        CustomConfiguration.configValues.put("useMekanismFrames", CustomConfiguration.config.getBoolean("useMekanismFrames", Configuration.CATEGORY_GENERAL, true, "Adds recipes using Mekanism Steel Casing"));
-        CustomConfiguration.configValues.put("machines.wither_builder.HCWither", CustomConfiguration.config.getBoolean("HCWither", "machines.wither_builder", false, "If enabled, only the wither builder will be able to place wither skulls. That means that players won't be able to place wither skulls. The recipe will change, but that will need a restart."));
+        CustomConfiguration.configValues.put("useTEFrames",
+                CustomConfiguration.config.getBoolean("useTEFrames", Configuration.CATEGORY_GENERAL,
+                        true, "Adds recipes using Thermal Expansion frames"));
+        CustomConfiguration.configValues.put("useEnderIOFrames",
+                CustomConfiguration.config.getBoolean("useEnderIOFrames",
+                        Configuration.CATEGORY_GENERAL, true, "Adds recipes using EnderIO frames"));
+        CustomConfiguration.configValues.put("useOriginalFrames",
+                CustomConfiguration.config.getBoolean("useOriginalFrames",
+                        Configuration.CATEGORY_GENERAL, true,
+                        "Adds recipes using TeslaCoreLib frames"));
+        CustomConfiguration.configValues.put("useMekanismFrames",
+                CustomConfiguration.config.getBoolean("useMekanismFrames",
+                        Configuration.CATEGORY_GENERAL, true,
+                        "Adds recipes using Mekanism Steel Casing"));
+        CustomConfiguration.configValues.put("machines.wither_builder.HCWither",
+                CustomConfiguration.config.getBoolean("HCWither", "machines.wither_builder", false,
+                        "If enabled, only the wither builder will be able to place wither skulls. That means that players won't be able to place wither skulls. The recipe will change, but that will need a restart."));
 
-        if (Loader.isModLoaded("crafttweaker")) CraftTweakerHelper.register();
-        if (Loader.isModLoaded("baubles")) MinecraftForge.EVENT_BUS.register(new MeatFeederBauble.Event());
+        if (Loader.isModLoaded("crafttweaker"))
+            CraftTweakerHelper.register();
+        if (Loader.isModLoaded("baubles"))
+            MinecraftForge.EVENT_BUS.register(new MeatFeederBauble.Event());
 
-        EntityRegistry.registerModEntity(new ResourceLocation(Reference.MOD_ID, "pink_slime"), EntityPinkSlime.class, "pink_slime", 135135, IndustrialForegoing.instance, 32, 1, false, 10485860, 16777215);
-        PINK_SLIME_LOOT = LootTableList.register(new ResourceLocation(Reference.MOD_ID, "entities/pink_slime"));
+        EntityRegistry.registerModEntity(new ResourceLocation(Reference.MOD_ID, "pink_slime"),
+                EntityPinkSlime.class, "pink_slime", 135135, IndustrialForegoing.instance, 32, 1,
+                false, 10485860, 16777215);
+        PINK_SLIME_LOOT = LootTableList
+                .register(new ResourceLocation(Reference.MOD_ID, "entities/pink_slime"));
 
         try {
-            new JsonParser().parse(readUrl(CONTRIBUTORS_FILE)).getAsJsonObject().get("uuid").getAsJsonArray().forEach(jsonElement -> CONTRIBUTORS.add(jsonElement.getAsString()));
-        } catch (Exception e) {
+            new JsonParser().parse(readUrl(CONTRIBUTORS_FILE)).getAsJsonObject().get("uuid")
+                    .getAsJsonArray()
+                    .forEach(jsonElement -> CONTRIBUTORS.add(jsonElement.getAsString()));
+        } catch (final Exception e) {
             e.printStackTrace();
         }
     }
