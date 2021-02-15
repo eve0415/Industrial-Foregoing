@@ -91,44 +91,41 @@ public class FluidPumpTile extends WorkingAreaElectricMachine {
     public float work() {
         if (WorkUtils.isDisabled(this.getBlockType()) || isWorkFinished || fluid == null)
             return 0;
-        if (tank.getFluidAmount() + 1000 <= tank.getCapacity()) {
-            if (lowestY == this.pos.getY()) {
-                isWorkFinished = true;
-                allBlocks = null;
-                return 0;
-            }
-            if (allBlocks == null || allBlocks.isEmpty()) {
-                fillCache();
-            }
-            BlockPos peeked = allBlocks.peek();
-            while (!allBlocks.isEmpty() && (this.world.isOutsideBuildHeight(peeked)
-                    || !isBlockSameFluid(peeked) || this.world.getBlockState(peeked).getBlock()
-                            .getMetaFromState(this.world.getBlockState(peeked)) != 0)) {
-                allBlocks.poll();
-                if (!allBlocks.isEmpty())
-                    peeked = allBlocks.peek();
-            }
-            if (peeked == null)
-                return 0;
-            if (this.world.getTileEntity(peeked) != null)
-                return 0;
-            final IFluidHandler handler = FluidUtil.getFluidHandler(this.world, peeked, null);
-            final FluidStack fluid = handler.drain(1000, true);
-            if (fluid != null) {
-                if (BlockRegistry.fluidPumpBlock.isReplaceFluidWithCobble()) {
-                    if (this.world.setBlockState(peeked, Blocks.COBBLESTONE.getDefaultState())) {
-                        tank.fill(fluid, true);
-                    }
-                } else {
-                    world.setBlockToAir(peeked);
-                    tank.fill(fluid, true);
-                }
-            } else {
-                return 0;
-            }
-            allBlocks.poll();
-            return 1;
+        if (tank.getFluidAmount() + 1000 > tank.getCapacity())
+            return 0;
+
+        if (lowestY == this.pos.getY()) {
+            isWorkFinished = true;
+            allBlocks = null;
+            return 0;
         }
+
+        if (allBlocks == null || allBlocks.isEmpty())
+            fillCache();
+
+        if (allBlocks.isEmpty())
+            return 0;
+
+        BlockPos peeked = allBlocks.poll();
+
+        while (peeked != null && world.getTileEntity(peeked) == null) {
+            if (FluidUtil.getFluidHandler(this.world, peeked, null) != null) {
+                final FluidStack fluidCache =
+                        FluidUtil.getFluidHandler(this.world, peeked, null).drain(1000, true);
+                if (fluidCache == null)
+                    break;
+                if (BlockRegistry.fluidPumpBlock.isReplaceFluidWithCobble()) {
+                    this.world.setBlockState(peeked, Blocks.COBBLESTONE.getDefaultState());
+                } else {
+                    this.world.setBlockToAir(peeked);
+                }
+                tank.fill(fluidCache, true);
+                return 1;
+            }
+
+            peeked = allBlocks.poll();
+        }
+
         return 0;
     }
 
@@ -151,9 +148,13 @@ public class FluidPumpTile extends WorkingAreaElectricMachine {
                                     .distanceSqToCenter(this.pos.getX(), lowestY, this.pos.getZ()))
                             .reversed());
         }
-        allBlocks.addAll(BlockUtils.getBlockPosInAABB(
-                getWorkingArea().offset(0, lowestY - this.getPos().getY() + 1, 0)));
-        allBlocks.removeIf(pos1 -> !isBlockSameFluid(pos1));
+
+        while (allBlocks.isEmpty() && lowestY != this.pos.getY()) {
+            allBlocks.addAll(BlockUtils.getBlockPosInAABB(
+                    getWorkingArea().offset(0, lowestY - this.getPos().getY() + 1, 0)));
+            allBlocks.removeIf(pos1 -> this.world.isOutsideBuildHeight(pos1) || !isFullFluid(pos1));
+            lowestY++;
+        }
     }
 
     private boolean isBlockSameFluid(final BlockPos pos) {
@@ -162,8 +163,14 @@ public class FluidPumpTile extends WorkingAreaElectricMachine {
         return fluid != null && fluid.getName().equals(this.fluid);
     }
 
+    private boolean isFullFluid(final BlockPos pos) {
+        final IFluidHandler fluid = FluidUtil.getFluidHandler(this.world, pos, null);
+        if (fluid == null)
+            return false;
+        return FluidUtil.getFluidHandler(this.world, pos, null).drain(1000, false) != null;
+    }
+
     // TODO make it fill buckets
-    @Override
     public AxisAlignedBB getWorkingArea() {
         return new AxisAlignedBB(this.pos.getX(), this.pos.getY(), this.pos.getZ(),
                 this.pos.getX() + 1, this.pos.getY() + 1, this.pos.getZ() + 1).offset(0, -1, 0)
