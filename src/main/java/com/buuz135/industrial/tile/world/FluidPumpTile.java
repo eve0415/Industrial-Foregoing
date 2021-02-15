@@ -49,6 +49,7 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.IFluidTank;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.items.ItemStackHandler;
 import net.ndrei.teslacorelib.gui.BasicRenderedGuiPiece;
 import net.ndrei.teslacorelib.gui.BasicTeslaGuiContainer;
 import net.ndrei.teslacorelib.gui.IGuiContainerPiece;
@@ -170,7 +171,16 @@ public class FluidPumpTile extends WorkingAreaElectricMachine {
         return FluidUtil.getFluidHandler(this.world, pos, null).drain(1000, false) != null;
     }
 
-    // TODO make it fill buckets
+    @Override
+    protected boolean acceptsFluidItem(final ItemStack stack) {
+        return ItemStackUtils.acceptsFluidItem(stack);
+    }
+
+    @Override
+    protected void processFluidItems(final ItemStackHandler fluidItems) {
+        ItemStackUtils.fillItemFromTank(fluidItems, tank);
+    }
+
     public AxisAlignedBB getWorkingArea() {
         return new AxisAlignedBB(this.pos.getX(), this.pos.getY(), this.pos.getZ(),
                 this.pos.getX() + 1, this.pos.getY() + 1, this.pos.getZ() + 1).offset(0, -1, 0)
