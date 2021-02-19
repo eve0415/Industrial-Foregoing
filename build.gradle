@@ -9,7 +9,7 @@ buildscript {
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.31"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.4.30"
         classpath 'com.selesse:gradle-git-changelog:0.2.+'
         classpath "gradle.plugin.com.matthewprenger:CurseGradle:1.1.0"
     }
