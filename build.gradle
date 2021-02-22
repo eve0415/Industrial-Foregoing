@@ -142,7 +142,7 @@ configurations {
 }
 
 dependencies {
-    deployerJars "org.apache.maven.wagon:wagon-ftp:2.2"
+    deployerJars "org.apache.maven.wagon:wagon-ftp:3.4.2"
 }
 
 uploadArchives {
